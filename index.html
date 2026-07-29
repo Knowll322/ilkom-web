@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Program Studi S1 Ilmu Komunikasi UDINUS. Menggabungkan komunikasi, teknologi informasi, dan creativepreneurship.">
+  <title>Ilmu Komunikasi UDINUS — Creative. Digital. Impactful.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div id="cursor" class="cursor"></div>
+  <div id="cursor-dot" class="cursor-dot"></div>
+
+  <!-- Loading Screen -->
+  <div id="loader" class="loader">
+    <div class="loader-inner">
+      <div class="loader-text">ILKOM<span>.</span></div>
+      <div class="loader-bar"><div class="loader-progress"></div></div>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">ILKOM<span class="logo-accent">.</span>UDINUS</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about" data-text="About">About</a></li>
+        <li><a href="#peminatan" data-text="Peminatan">Peminatan</a></li>
+        <li><a href="#kurikulum" data-text="Kurikulum">Kurikulum</a></li>
+        <li><a href="#karya" data-text="Karya">Karya</a></li>
+        <li><a href="#berita" data-text="Berita">Berita</a></li>
+        <li><a href="#kontak" data-text="Kontak">Kontak</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="#kontak" class="nav-cta">Daftar Sekarang →</a>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="hero" class="hero">
+    <!-- Animated mesh gradient canvas -->
+    <canvas id="heroCanvas" class="hero-canvas"></canvas>
+    <!-- Noise texture overlay -->
+    <div class="hero-noise"></div>
+    
+    <!-- Floating sticker badges -->
+    <div class="sticker sticker-1" data-speed="0.3">✦ AKREDITASI UNGGUL ✦</div>
+    <div class="sticker sticker-2" data-speed="0.5">💬 KOMUNIKASI</div>
+    <div class="sticker sticker-3" data-speed="0.2">🎬 KREATIF</div>
+    <div class="sticker sticker-4" data-speed="0.4">📡 DIGITAL</div>
+
+    <div class="hero-content">
+      <div class="hero-tag scroll-reveal">Program Studi S1 · FIK UDINUS · Semarang</div>
+      <!-- Giant split headline -->
+      <h1 class="hero-title">
+        <span class="hero-line" data-index="0">
+          <span class="word-outline">BUKAN</span>
+          <span class="word-fill">CUMA</span>
+        </span>
+        <span class="hero-line" data-index="1">
+          <span class="word-fill">NGOMONG,</span>
+        </span>
+        <span class="hero-line hero-line-accent" data-index="2">
+          <span class="word-gradient">TAPI BIKIN</span>
+        </span>
+        <span class="hero-line" data-index="3">
+          <span class="word-outline">DAMPAK.</span>
+        </span>
+      </h1>
+      <div class="hero-bottom">
+        <p class="hero-desc">Komunikasi yang kreatif, digital, dan relevan. Gabungkan seni, teknologi, dan bisnis dalam satu prodi yang berani.</p>
+        <div class="hero-actions">
+          <a href="#about" class="btn-hero-primary">Jelajahi Prodi <span class="btn-arrow">→</span></a>
+          <a href="#karya" class="btn-hero-ghost">Lihat Karya</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Scrolling stats ticker inside hero -->
+    <div class="hero-ticker">
+      <div class="ticker-track">
+        <span>🏆 Akreditasi UNGGUL</span>
+        <span>·</span>
+        <span>📅 Berdiri 2014</span>
+        <span>·</span>
+        <span>🎓 2 Peminatan</span>
+        <span>·</span>
+        <span>📡 TVKU & Dinus FM</span>
+        <span>·</span>
+        <span>🌏 Program Internasional</span>
+        <span>·</span>
+        <span>💡 Creativepreneurship</span>
+        <span>·</span>
+        <span>🏆 Akreditasi UNGGUL</span>
+        <span>·</span>
+        <span>📅 Berdiri 2014</span>
+        <span>·</span>
+        <span>🎓 2 Peminatan</span>
+        <span>·</span>
+        <span>📡 TVKU & Dinus FM</span>
+        <span>·</span>
+        <span>🌏 Program Internasional</span>
+        <span>·</span>
+        <span>💡 Creativepreneurship</span>
+        <span>·</span>
+      </div>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- About / Profil (Bento Grid) -->
+  <section id="about" class="section">
+    <div class="container">
+      <!-- Section label -->
+      <div class="section-eyebrow scroll-reveal">
+        <span class="eyebrow-line"></span>
+        <span>01 — TENTANG PRODI</span>
+      </div>
+
+      <!-- BENTO GRID: 12-column -->
+      <div class="bento-grid">
+
+        <!-- Main intro card: col-span 8 -->
+        <div class="bento-card bento-main scroll-reveal">
+          <div class="card-badge">Fakultas Ilmu Komputer · UDINUS</div>
+          <h2 class="bento-title">Komunikasi <em>×</em><br>Teknologi <em>×</em><br>Kreativitas</h2>
+          <p>Program Studi S1 Ilmu Komunikasi UDINUS adalah satu-satunya prodi komunikasi yang berada di bawah Fakultas Ilmu Komputer. Kami menggabungkan keilmuan komunikasi dengan teknologi informasi dan jiwa <strong>creativepreneurship</strong>.</p>
+        </div>
+
+        <!-- Akreditasi card: col-span 4 -->
+        <div class="bento-card bento-accent scroll-reveal" data-delay="1">
+          <div class="accent-label">AKREDITASI</div>
+          <div class="accent-big">UNGGUL</div>
+          <div class="accent-sub">BAN-PT 2023 · s.d. Maret 2028</div>
+          <div class="accent-sk">SK No. 1017/SK/BAN-PT/Ak/S/III/2023</div>
+        </div>
+
+        <!-- Year bento: col-span 3 -->
+        <div class="bento-card bento-stat scroll-reveal">
+          <div class="stat-super">2014</div>
+          <div class="stat-label">Tahun Berdiri</div>
+        </div>
+
+        <!-- Peminatan bento: col-span 3 -->
+        <div class="bento-card bento-stat bento-stat-2 scroll-reveal" data-delay="1">
+          <div class="stat-super">2</div>
+          <div class="stat-label">Peminatan</div>
+        </div>
+
+        <!-- Fasilitas bento: col-span 6 -->
+        <div class="bento-card bento-facilities scroll-reveal" data-delay="2">
+          <h3>Fasilitas Unggulan</h3>
+          <div class="facility-chips">
+            <span class="chip">📺 TVKU</span>
+            <span class="chip">📻 Dinus FM</span>
+            <span class="chip">🎬 Lab Mirror Training</span>
+            <span class="chip">🗣️ Lab Bahasa</span>
+            <span class="chip">🎭 Teater Hall</span>
+          </div>
+        </div>
+
+        <!-- Kaprodi card: col-span 6 -->
+        <div class="bento-card bento-leader scroll-reveal" data-delay="1">
+          <div class="leader-avatar">👩‍🏫</div>
+          <div class="leader-info">
+            <div class="leader-role">Ketua Program Studi</div>
+            <div class="leader-name">Dr. Lisa Mardiana,<br>S.Sos., M.I.Kom.</div>
+          </div>
+          <div class="leader-info">
+            <div class="leader-role">Sekretaris Prodi</div>
+            <div class="leader-name">Mutia Rahmi Pratiwi,<br>M.I.Kom.</div>
+          </div>
+        </div>
+
+        <!-- Visi Misi: col-span 12 -->
+        <div class="bento-card bento-visi scroll-reveal">
+          <div class="visi-grid">
+            <div class="visi-item">
+              <div class="visi-icon">🎯</div>
+              <h4>Visi</h4>
+              <p><em>"Mengembangkan keilmuan komunikasi dengan keunggulan teknologi informasi, seni dan creativepreneurship."</em></p>
+            </div>
+            <div class="visi-divider"></div>
+            <div class="misi-item">
+              <div class="visi-icon">🚀</div>
+              <h4>Misi</h4>
+              <ul class="misi-list">
+                <li>Pendidikan komunikasi berbasis teknologi informasi</li>
+                <li>Menumbuhkan jiwa kewirausahaan kreatif</li>
+                <li>Kerja sama nasional & internasional</li>
+                <li>Penelitian & pengabdian berkualitas</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Peminatan (Large Cards, Side by Side) -->
+  <section id="peminatan" class="section section-dark">
+    <div class="container">
+      <div class="section-eyebrow light scroll-reveal">
+        <span class="eyebrow-line"></span>
+        <span>02 — PEMINATAN</span>
+      </div>
+      <h2 class="section-headline light scroll-reveal">Pilih <span class="text-gradient">Jalanmu</span></h2>
+      
+      <div class="peminatan-split">
+
+        <!-- Bisnis -->
+        <div class="peminatan-mega bisnis scroll-reveal">
+          <div class="peminatan-number">01</div>
+          <div class="peminatan-icon-wrap">
+            <div class="peminatan-emoji">💼</div>
+          </div>
+          <h3>Komunikasi<br><span>Bisnis</span></h3>
+          <p>PR, digital marketing, brand strategy, corporate communication. Kuasai seni menyampaikan pesan di dunia bisnis modern.</p>
+          <div class="career-tags">
+            <span>Public Relations</span>
+            <span>Digital Marketing</span>
+            <span>Brand Manager</span>
+            <span>Corporate Comm.</span>
+            <span>Market Research</span>
+            <span>Event Organizer</span>
+          </div>
+          <a href="#kurikulum" class="peminatan-cta bisnis-cta">Lihat Kurikulum →</a>
+        </div>
+
+        <!-- Vertical divider -->
+        <div class="peminatan-divider"></div>
+
+        <!-- Seni Kreatif -->
+        <div class="peminatan-mega kreatif scroll-reveal" data-delay="1">
+          <div class="peminatan-number">02</div>
+          <div class="peminatan-icon-wrap">
+            <div class="peminatan-emoji">🎬</div>
+          </div>
+          <h3>Komunikasi<br><span>Seni Kreatif</span></h3>
+          <p>Broadcasting, sinematografi, content creation, penulisan skenario. Jadikan kreativitasmu sebagai karier nyata.</p>
+          <div class="career-tags">
+            <span>Content Creator</span>
+            <span>Broadcaster</span>
+            <span>Sinematografer</span>
+            <span>Journalist</span>
+            <span>Scriptwriter</span>
+            <span>Creativepreneur</span>
+          </div>
+          <a href="#kurikulum" class="peminatan-cta kreatif-cta">Lihat Kurikulum →</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Kurikulum (Tabs + Accordion) -->
+  <section id="kurikulum" class="section">
+    <div class="container">
+      <div class="section-eyebrow scroll-reveal"><span class="eyebrow-line"></span><span>03 — KURIKULUM</span></div>
+      <h2 class="section-headline scroll-reveal">Apa yang <span class="text-gradient">Dipelajari?</span></h2>
+
+      <div class="semester-tabs scroll-reveal">
+        <button class="sem-tab active" data-semester="1">Sem 1</button>
+        <button class="sem-tab" data-semester="2">Sem 2</button>
+        <button class="sem-tab" data-semester="3">Sem 3</button>
+        <button class="sem-tab" data-semester="4">Sem 4</button>
+        <button class="sem-tab" data-semester="5">Sem 5</button>
+        <button class="sem-tab" data-semester="6">Sem 6</button>
+        <button class="sem-tab" data-semester="7">Sem 7 · MBKM</button>
+        <button class="sem-tab" data-semester="8">Sem 8 · TA</button>
+      </div>
+
+      <div class="accordion" id="accordion">
+        <!-- Semester 1 -->
+        <div class="acc-group" data-semester="1">
+          <div class="acc-header active">
+            <span class="acc-title">📚 Semester 1 — Fondasi</span>
+            <span class="acc-chevron">↓</span>
+          </div>
+          <div class="acc-body open">
+            <div class="course-row"><span>Pengantar Ilmu Komunikasi</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Bahasa Indonesia</span><span class="sks">2 SKS</span></div>
+            <div class="course-row"><span>Pengantar Teknologi Informasi</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Sosiologi Komunikasi</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Dasar-Dasar Jurnalistik</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Pancasila</span><span class="sks">2 SKS</span></div>
+            <div class="course-row"><span>Bahasa Inggris I</span><span class="sks">2 SKS</span></div>
+          </div>
+        </div>
+        <div class="acc-group" data-semester="2" style="display:none">
+          <div class="acc-header">
+            <span class="acc-title">📚 Semester 2 — Eksplorasi</span>
+            <span class="acc-chevron">↓</span>
+          </div>
+          <div class="acc-body">
+            <div class="course-row"><span>Teori Komunikasi</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Komunikasi Massa</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Psikologi Komunikasi</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Fotografi</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Desain Komunikasi Visual</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Kewarganegaraan</span><span class="sks">2 SKS</span></div>
+            <div class="course-row"><span>Bahasa Inggris II</span><span class="sks">2 SKS</span></div>
+          </div>
+        </div>
+        <div class="acc-group" data-semester="3" style="display:none">
+          <div class="acc-header">
+            <span class="acc-title">📚 Semester 3 — Spesialisasi</span>
+            <span class="acc-chevron">↓</span>
+          </div>
+          <div class="acc-body">
+            <div class="course-row"><span>Public Relations</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Komunikasi Antarbudaya</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Produksi Media Audio</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Penulisan Kreatif</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Statistik Komunikasi</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Komunikasi Organisasi</span><span class="sks">3 SKS</span></div>
+          </div>
+        </div>
+        <div class="acc-group" data-semester="4" style="display:none">
+          <div class="acc-header">
+            <span class="acc-title">📚 Semester 4 — Digital Media</span>
+            <span class="acc-chevron">↓</span>
+          </div>
+          <div class="acc-body">
+            <div class="course-row"><span>Komunikasi Pemasaran</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Produksi Media Video</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Media Digital & New Media</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Etika & Hukum Media</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Metode Penelitian Komunikasi</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Komunikasi Politik</span><span class="sks">3 SKS</span></div>
+          </div>
+        </div>
+        <div class="acc-group" data-semester="5" style="display:none">
+          <div class="acc-header">
+            <span class="acc-title">📚 Semester 5 — Peminatan Mulai</span>
+            <span class="acc-chevron">↓</span>
+          </div>
+          <div class="acc-body">
+            <div class="course-row"><span>Strategi Komunikasi Digital</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Brand Communication</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Sinematografi</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Manajemen Event</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Media Planning</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Seminar Komunikasi</span><span class="sks">2 SKS</span></div>
+          </div>
+        </div>
+        <div class="acc-group" data-semester="6" style="display:none">
+          <div class="acc-header">
+            <span class="acc-title">📚 Semester 6 — Advanced</span>
+            <span class="acc-chevron">↓</span>
+          </div>
+          <div class="acc-body">
+            <div class="course-row"><span>Kampanye Komunikasi</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Content Production & Management</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Corporate Social Responsibility</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Podcast & Audio Storytelling</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Entrepreneurship Kreatif</span><span class="sks">3 SKS</span></div>
+            <div class="course-row"><span>Proposal Penelitian</span><span class="sks">2 SKS</span></div>
+          </div>
+        </div>
+        <div class="acc-group" data-semester="7" style="display:none">
+          <div class="acc-header">
+            <span class="acc-title">🏢 Semester 7 — Program Panca MBKM</span>
+            <span class="acc-chevron">↓</span>
+          </div>
+          <div class="acc-body">
+            <div class="panca-bento">
+              <div class="panca-cell"><div class="panca-emoji">🏢</div><strong>KKI</strong><span>Kuliah Kerja Industri</span></div>
+              <div class="panca-cell"><div class="panca-emoji">💼</div><strong>KKU</strong><span>Kuliah Kerja Bisnis</span></div>
+              <div class="panca-cell"><div class="panca-emoji">🌏</div><strong>KPI</strong><span>Program Internasional</span></div>
+              <div class="panca-cell"><div class="panca-emoji">🔬</div><strong>KKP</strong><span>Kuliah Kerja Penelitian</span></div>
+              <div class="panca-cell"><div class="panca-emoji">❤️</div><strong>KKK</strong><span>Kuliah Kerja Kemanusiaan</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="acc-group" data-semester="8" style="display:none">
+          <div class="acc-header">
+            <span class="acc-title">🎓 Semester 8 — Tugas Akhir</span>
+            <span class="acc-chevron">↓</span>
+          </div>
+          <div class="acc-body">
+            <div class="course-row"><span>Skripsi / Tugas Akhir</span><span class="sks">6 SKS</span></div>
+            <div class="course-row"><span>Sidang Komprehensif</span><span class="sks">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Karya Mahasiswa (Horizontal Scroll Gallery) -->
+  <section id="karya" class="section">
+    <div class="container">
+      <div class="section-eyebrow scroll-reveal"><span class="eyebrow-line"></span><span>04 — KARYA MAHASISWA</span></div>
+      <div class="karya-header">
+        <h2 class="section-headline scroll-reveal">Dari Ide ke <span class="text-gradient">Karya Nyata</span></h2>
+        <div class="filter-bar scroll-reveal">
+          <button class="filter-pill active" data-filter="all">Semua</button>
+          <button class="filter-pill" data-filter="video">Video</button>
+          <button class="filter-pill" data-filter="desain">Desain</button>
+          <button class="filter-pill" data-filter="campaign">Campaign</button>
+          <button class="filter-pill" data-filter="podcast">Podcast</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full-width horizontal scroll -->
+    <div class="karya-scroll-container">
+      <div class="karya-scroll-track" id="karyaTrack">
+        <div class="karya-item" data-category="video">
+          <div class="karya-img" style="background-image:url('karya1.jpg')"></div>
+          <div class="karya-info">
+            <span class="karya-cat">Video</span>
+            <h4>Dokumenter: Suara Semarang</h4>
+            <p>Film dokumenter tentang budaya lokal</p>
+          </div>
+        </div>
+        <div class="karya-item" data-category="desain">
+          <div class="karya-img" style="background-image:url('karya2.jpg')"></div>
+          <div class="karya-info">
+            <span class="karya-cat">Desain</span>
+            <h4>Brand Identity: LocalCraft</h4>
+            <p>Branding lengkap untuk UMKM lokal</p>
+          </div>
+        </div>
+        <div class="karya-item" data-category="podcast">
+          <div class="karya-img" style="background-image:url('karya3.jpg')"></div>
+          <div class="karya-info">
+            <span class="karya-cat">Podcast</span>
+            <h4>KomPod: Ngobrol Seru</h4>
+            <p>Podcast mingguan dunia komunikasi</p>
+          </div>
+        </div>
+        <div class="karya-item" data-category="campaign">
+          <div class="karya-img" style="background: linear-gradient(135deg,#F59E0B,#EF4444)"></div>
+          <div class="karya-info">
+            <span class="karya-cat">Campaign</span>
+            <h4>Anti Hoax Movement</h4>
+            <p>Kampanye sosial media anti hoax</p>
+          </div>
+        </div>
+        <div class="karya-item" data-category="video">
+          <div class="karya-img" style="background: linear-gradient(135deg,#EC4899,#8B5CF6)"></div>
+          <div class="karya-info">
+            <span class="karya-cat">Video</span>
+            <h4>Short Film: Koneksi</h4>
+            <p>Film pendek generasi digital</p>
+          </div>
+        </div>
+        <div class="karya-item" data-category="desain">
+          <div class="karya-img" style="background: linear-gradient(135deg,#06B6D4,#3B82F6)"></div>
+          <div class="karya-info">
+            <span class="karya-cat">Desain</span>
+            <h4>Campaign Visual: Go Digital</h4>
+            <p>Seri poster literasi digital</p>
+          </div>
+        </div>
+        <div class="karya-item" data-category="campaign">
+          <div class="karya-img" style="background: linear-gradient(135deg,#8B5CF6,#06B6D4)"></div>
+          <div class="karya-info">
+            <span class="karya-cat">Campaign</span>
+            <h4>Semarang Bercerita</h4>
+            <p>City branding Kota Semarang</p>
+          </div>
+        </div>
+        <div class="karya-item" data-category="podcast">
+          <div class="karya-img" style="background: linear-gradient(135deg,#10B981,#06B6D4)"></div>
+          <div class="karya-info">
+            <span class="karya-cat">Podcast</span>
+            <h4>Behind The Mic</h4>
+            <p>Wawancara eksklusif praktisi media</p>
+          </div>
+        </div>
+      </div>
+      <!-- Drag hint -->
+      <div class="drag-hint"><span>← Drag untuk scroll →</span></div>
+    </div>
+  </section>
+
+  <!-- Fun Fact + Stats (Bold Section) -->
+  <section class="section section-dark stats-section">
+    <div class="container">
+      <div class="stats-grid-big">
+        <div class="stat-big scroll-reveal">
+          <div class="stat-big-num" data-target="2014">0</div>
+          <div class="stat-big-label">Tahun Berdiri</div>
+        </div>
+        <div class="stat-big scroll-reveal" data-delay="1">
+          <div class="stat-big-num" data-target="2">0</div>
+          <div class="stat-big-label">Peminatan</div>
+        </div>
+        <div class="stat-big scroll-reveal" data-delay="2">
+          <div class="stat-big-num" data-target="5">0</div>
+          <div class="stat-big-label">Program MBKM</div>
+        </div>
+      </div>
+      <div class="funfact-strip scroll-reveal">
+        <div class="ff-icon">💡</div>
+        <p id="funFactText">Rata-rata orang menghabiskan 2.5 jam per hari di media sosial. Bayangkan dampak konten yang kamu buat!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Berita & Event -->
+  <section id="berita" class="section">
+    <div class="container">
+      <div class="section-eyebrow scroll-reveal"><span class="eyebrow-line"></span><span>05 — BERITA & EVENT</span></div>
+      <h2 class="section-headline scroll-reveal">Yang Lagi <span class="text-gradient">Happening</span></h2>
+
+      <div class="news-bento">
+        <!-- Featured news -->
+        <div class="news-featured scroll-reveal">
+          <div class="news-feat-img" style="background:linear-gradient(135deg,#4F46E5,#7C3AED)"></div>
+          <div class="news-feat-content">
+            <span class="news-tag tag-pengumuman">🏆 Pengumuman</span>
+            <h3>Prodi Ilkom UDINUS Raih Akreditasi UNGGUL!</h3>
+            <p>Pencapaian tertinggi dari BAN-PT yang menegaskan kualitas kurikulum, fasilitas, dan daya saing lulusan.</p>
+            <span class="news-date">1 Maret 2023</span>
+          </div>
+        </div>
+        <!-- News grid -->
+        <div class="news-grid">
+          <div class="news-card scroll-reveal">
+            <div class="news-card-img" style="background:linear-gradient(135deg,#06B6D4,#3B82F6)"></div>
+            <span class="news-tag tag-seminar">Seminar</span>
+            <h4>Seminar Nasional: Masa Depan Komunikasi Digital</h4>
+            <span class="news-date">15 Jul 2026</span>
+          </div>
+          <div class="news-card scroll-reveal" data-delay="1">
+            <div class="news-card-img" style="background:linear-gradient(135deg,#F59E0B,#EF4444)"></div>
+            <span class="news-tag tag-lomba">Lomba</span>
+            <h4>Juara 1 Kompetisi Film Pendek Nasional</h4>
+            <span class="news-date">28 Jun 2026</span>
+          </div>
+          <div class="news-card scroll-reveal" data-delay="2">
+            <div class="news-card-img" style="background:linear-gradient(135deg,#10B981,#06B6D4)"></div>
+            <span class="news-tag tag-workshop">Workshop</span>
+            <h4>Workshop Content Creation bersama YouTuber</h4>
+            <span class="news-date">10 Jun 2026</span>
+          </div>
+        </div>
+        <!-- Calendar sidebar -->
+        <div class="news-calendar scroll-reveal">
+          <div class="cal-header">
+            <button id="calendarPrev" class="cal-nav">←</button>
+            <span id="calendarMonth" class="cal-month">Juli 2026</span>
+            <button id="calendarNext" class="cal-nav">→</button>
+          </div>
+          <div class="cal-days">
+            <span>Sen</span><span>Sel</span><span>Rab</span>
+            <span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span>
+          </div>
+          <div class="cal-grid" id="calendarGrid"></div>
+          <div class="upcoming-list">
+            <h5>📅 Event Mendatang</h5>
+            <div class="upcoming-item"><span class="upd">15 Jul</span><span>Seminar Komdig</span></div>
+            <div class="upcoming-item"><span class="upd">22 Jul</span><span>Workshop Podcast</span></div>
+            <div class="upcoming-item"><span class="upd">29 Jul</span><span>UAS PTI and DDK</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Himpunan -->
+  <section id="himpunan" class="section section-dark">
+    <div class="container">
+      <div class="section-eyebrow light scroll-reveal"><span class="eyebrow-line"></span><span>06 — HIMPUNAN</span></div>
+      <h2 class="section-headline light scroll-reveal">Life di <span class="text-gradient">Ilkom UDINUS</span></h2>
+      <div class="hima-layout">
+        <div class="hima-main scroll-reveal">
+          <div class="hima-badge-pill">HIMA ILKOM</div>
+          <h3>Himpunan Mahasiswa<br>Ilmu Komunikasi</h3>
+          <p>Wadah kreativitas, leadership, dan networking. Dari seminar nasional hingga festival film — HIMA Ilkom adalah rumah keduamu.</p>
+          <a href="https://www.instagram.com/ilkomudinus/" target="_blank" rel="noopener" class="hima-ig-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
+            @ilkomudinus
+          </a>
+        </div>
+        <div class="hima-activities scroll-reveal" data-delay="1">
+          <div class="activity-tile">
+            <span class="act-emoji">🎪</span>
+            <div>
+              <strong>Event & Festival</strong>
+              <p>Seminar nasional, festival film, kompetisi kreatif</p>
+            </div>
+          </div>
+          <div class="activity-tile">
+            <span class="act-emoji">🎙️</span>
+            <div>
+              <strong>Studio Project</strong>
+              <p>Podcast, video kolaboratif, konten prodi</p>
+            </div>
+          </div>
+          <div class="activity-tile">
+            <span class="act-emoji">🤝</span>
+            <div>
+              <strong>Networking</strong>
+              <p>Alumni, industri, mentoring lintas angkatan</p>
+            </div>
+          </div>
+          <div class="activity-tile">
+            <span class="act-emoji">🚀</span>
+            <div>
+              <strong>Pengembangan Diri</strong>
+              <p>Leadership camp, public speaking, workshop</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kontak -->
+  <section id="kontak" class="section">
+    <div class="container">
+      <div class="section-eyebrow scroll-reveal"><span class="eyebrow-line"></span><span>07 — KONTAK</span></div>
+      <h2 class="section-headline scroll-reveal">Mari <span class="text-gradient">Ngobrol!</span></h2>
+      <div class="kontak-layout">
+        <div class="kontak-form-wrap scroll-reveal">
+          <form id="contactForm" class="contact-form">
+            <div class="form-field">
+              <input type="text" id="fName" class="form-input" placeholder=" " required>
+              <label for="fName" class="form-label">Nama Lengkap</label>
+            </div>
+            <div class="form-field">
+              <input type="email" id="fEmail" class="form-input" placeholder=" " required>
+              <label for="fEmail" class="form-label">Email</label>
+            </div>
+            <div class="form-field">
+              <input type="text" id="fSubject" class="form-input" placeholder=" " required>
+              <label for="fSubject" class="form-label">Subjek</label>
+            </div>
+            <div class="form-field">
+              <textarea id="fMessage" class="form-input form-textarea" placeholder=" " rows="5" required></textarea>
+              <label for="fMessage" class="form-label">Pesan</label>
+            </div>
+            <button type="submit" class="form-submit" id="formSubmit">Kirim Pesan <span>→</span></button>
+            <div id="formSuccess" class="form-success" style="display:none">✅ Pesan terkirim! Kami akan segera menghubungi kamu.</div>
+          </form>
+        </div>
+        <div class="kontak-info scroll-reveal" data-delay="1">
+          <div class="info-block">
+            <div class="info-icon">📍</div>
+            <div>
+              <strong>Alamat</strong>
+              <p>Gedung H, Jl. Imam Bonjol No. 207<br>Semarang, Jawa Tengah</p>
+            </div>
+          </div>
+          <div class="info-block">
+            <div class="info-icon">📞</div>
+            <div>
+              <strong>Telepon</strong>
+              <p>(024) 3545875</p>
+            </div>
+          </div>
+          <div class="info-block">
+            <div class="info-icon">✉️</div>
+            <div>
+              <strong>Email</strong>
+              <p>sekretariat@ilmukomunikasi.sentral.dinus.ac.id</p>
+            </div>
+          </div>
+          <div class="social-row">
+            <a href="https://www.instagram.com/ilkomudinus/" target="_blank" rel="noopener" class="social-pill">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
+              @ilkomudinus
+            </a>
+            <a href="https://dinus.ac.id/s1-ilmu-komunikasi/" target="_blank" rel="noopener" class="social-pill">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              Website UDINUS
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo">ILKOM<span class="logo-accent">.</span>UDINUS</div>
+          <p>Program Studi S1 Ilmu Komunikasi<br>Universitas Dian Nuswantoro, Semarang</p>
+          <p class="footer-motto"><em>"Dumununging Ingsun Angraksa Nagara"</em></p>
+        </div>
+        <div class="footer-links-group">
+          <div class="footer-col">
+            <h5>Navigasi</h5>
+            <a href="#about">Profil Prodi</a>
+            <a href="#peminatan">Peminatan</a>
+            <a href="#kurikulum">Kurikulum</a>
+            <a href="#karya">Karya</a>
+          </div>
+          <div class="footer-col">
+            <h5>Info</h5>
+            <a href="#berita">Berita & Event</a>
+            <a href="#himpunan">Himpunan</a>
+            <a href="#kontak">Kontak</a>
+            <a href="https://dinus.ac.id" target="_blank">Website UDINUS</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Ilmu Komunikasi UDINUS · All rights reserved</p>
+        <a href="#hero" class="back-top">Kembali ke Atas ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating CTA -->
+  <div class="floating-cta" id="floatingCta">
+    <a href="#peminatan" class="float-btn">Lihat Peminatan ✦</a>
+  </div>
+
+  <!-- GSAP + Plugins -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+  <!-- Anime.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
