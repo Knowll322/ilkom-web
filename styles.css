@@ -1246,6 +1246,7 @@ body {
   background: var(--gold); color: var(--text-dark); text-transform: uppercase; white-space: nowrap;
 }
 .mem-badge-role.media { background: var(--blue-mid); color: var(--white); }
+.mem-badge-role.pr { background: #8B5CF6; color: var(--white); }
 .mem-badge-role.akad { background: #10B981; color: var(--white); }
 
 .member-card h4 { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text-dark); margin: 0.5rem 0 0.2rem; }
