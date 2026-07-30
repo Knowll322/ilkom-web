@@ -726,4 +726,230 @@ window.addEventListener('load', () => {
       }
     });
   }
+
+  // 26. PORTAL KELAS & MAHASISWA INTERACTIVITY
+  // A. Main Portal Navigation Tabs
+  const portalTabs = document.querySelectorAll('.portal-tab');
+  const portalTabContents = document.querySelectorAll('.portal-tab-content');
+
+  portalTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      portalTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const targetId = 'tab-' + tab.dataset.tab;
+
+      portalTabContents.forEach(content => {
+        if (content.id === targetId) {
+          content.style.display = 'block';
+          if (typeof gsap !== 'undefined') {
+            gsap.fromTo(content, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+          }
+        } else {
+          content.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // B. Jadwal Kuliah Day Filter
+  const dayBtns = document.querySelectorAll('.day-btn');
+  const dayScheduleGroups = document.querySelectorAll('.day-schedule-group');
+
+  dayBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      dayBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const day = btn.dataset.day;
+
+      dayScheduleGroups.forEach(group => {
+        if (group.dataset.dayGroup === day) {
+          group.style.display = 'block';
+          if (typeof anime !== 'undefined') {
+            anime({
+              targets: group.querySelectorAll('.schedule-card'),
+              opacity: [0, 1],
+              translateY: [15, 0],
+              delay: anime.stagger(80),
+              duration: 400,
+              easing: 'easeOutQuad'
+            });
+          }
+        } else {
+          group.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // C. Kalender Tugas & Exam Filter
+  const dlFilters = document.querySelectorAll('.dl-filter');
+  const deadlineCards = document.querySelectorAll('.deadline-card');
+
+  dlFilters.forEach(filter => {
+    filter.addEventListener('click', () => {
+      dlFilters.forEach(f => f.classList.remove('active'));
+      filter.classList.add('active');
+      const category = filter.dataset.dl;
+
+      deadlineCards.forEach(card => {
+        if (category === 'all' || card.dataset.dlType === category) {
+          card.style.display = 'flex';
+          if (typeof anime !== 'undefined') {
+            anime({
+              targets: card,
+              opacity: [0, 1],
+              scale: [0.95, 1],
+              duration: 350,
+              easing: 'easeOutBack'
+            });
+          }
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // D. Galeri Anggota Kelas Filter
+  const memFilters = document.querySelectorAll('.mem-filter');
+  const memberCards = document.querySelectorAll('.member-card');
+
+  memFilters.forEach(filter => {
+    filter.addEventListener('click', () => {
+      memFilters.forEach(f => f.classList.remove('active'));
+      filter.classList.add('active');
+      const cat = filter.dataset.mem;
+
+      memberCards.forEach(card => {
+        if (cat === 'all' || card.dataset.memType === cat) {
+          card.style.display = 'block';
+          if (typeof anime !== 'undefined') {
+            anime({
+              targets: card,
+              opacity: [0, 1],
+              translateY: [20, 0],
+              duration: 400,
+              easing: 'easeOutQuad'
+            });
+          }
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // E. File Dropzone & Upload Form Simulation
+  const dropzone = document.getElementById('fileDropzone');
+  const fileInput = document.getElementById('fileInput');
+  const fileSelectedName = document.getElementById('fileSelectedName');
+  const materialUploadForm = document.getElementById('materialUploadForm');
+  const archiveList = document.getElementById('archiveList');
+
+  if (dropzone && fileInput) {
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    ['dragover', 'dragenter'].forEach(eventName => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'dragend', 'drop'].forEach(eventName => {
+      dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+      });
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        updateFileNotice(fileInput.files[0].name);
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        updateFileNotice(fileInput.files[0].name);
+      }
+    });
+
+    function updateFileNotice(fileName) {
+      if (fileSelectedName) {
+        fileSelectedName.style.display = 'block';
+        fileSelectedName.textContent = `📄 File terpilih: ${fileName}`;
+      }
+    }
+  }
+
+  if (materialUploadForm && archiveList) {
+    materialUploadForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('upTitle')?.value || 'Materi Kuliah Baru';
+      const subject = document.getElementById('upSubject')?.value || 'Mata Kuliah';
+      const lecturer = document.getElementById('upLecturer')?.value || 'Dosen Pengampu';
+      const permCheck = document.getElementById('permCheck');
+
+      if (permCheck && !permCheck.checked) {
+        alert('Mohon konfirmasi bahwa Anda telah mendapatkan izin resmi dari Dosen Pengampu.');
+        return;
+      }
+
+      // Determine file extension icon
+      const fileName = fileInput?.files?.[0]?.name || 'Materi_Slide.pptx';
+      const isPdf = fileName.toLowerCase().endsWith('.pdf');
+      const isDoc = fileName.toLowerCase().endsWith('.doc') || fileName.toLowerCase().endsWith('.docx');
+      const iconClass = isPdf ? 'pdf' : (isDoc ? 'doc' : 'ppt');
+      const iconText = isPdf ? 'PDF' : (isDoc ? 'DOC' : 'PPT');
+
+      // Create new archive item
+      const newItem = document.createElement('div');
+      newItem.className = 'archive-item';
+      newItem.innerHTML = `
+        <div class="arc-icon ${iconClass}">${iconText}</div>
+        <div class="arc-info">
+          <strong>${title} (${subject})</strong>
+          <span>Dosen: ${lecturer} · Baru diunggah · ${iconText}</span>
+        </div>
+        <a href="#" class="arc-dl-btn" onclick="alert('Downloading ${title}...'); return false;">Download ⬇️</a>
+      `;
+
+      archiveList.prepend(newItem);
+
+      if (typeof anime !== 'undefined') {
+        anime({
+          targets: newItem,
+          opacity: [0, 1],
+          translateX: [-20, 0],
+          duration: 500,
+          easing: 'easeOutBack'
+        });
+      }
+
+      alert(`✅ Materi "${title}" berhasil diunggah dan disimpan ke Arsip Kuliah!`);
+      materialUploadForm.reset();
+      if (fileSelectedName) fileSelectedName.style.display = 'none';
+    });
+  }
+
+  // F. Live Archive Search
+  const archiveSearchInput = document.getElementById('archiveSearchInput');
+  if (archiveSearchInput && archiveList) {
+    archiveSearchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const items = archiveList.querySelectorAll('.archive-item');
+
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(query)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  }
 });
+
