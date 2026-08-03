@@ -1058,7 +1058,7 @@ window.addEventListener('load', () => {
     } else if (tabKey === 'req') {
       const el = document.getElementById('adminRequestsTab');
       if (el) el.style.display = 'block';
-      renderAdminRequestsList();
+      loadDataFromCloud();
     }
   }
 
@@ -2077,6 +2077,18 @@ window.addEventListener('load', () => {
       alert(`✅ Permintaan edit profil (${activeReqName}) berhasil dikirim ke Ketua Kelas (Admin)! Silakan tunggu persetujuan.`);
       const modal = document.getElementById('studentRequestModalBackdrop');
       if (modal) modal.style.display = 'none';
+    });
+  }
+
+  // Refresh Admin Requests Button Handler
+  const btnRefreshAdminRequests = document.getElementById('btnRefreshAdminRequests');
+  if (btnRefreshAdminRequests) {
+    btnRefreshAdminRequests.addEventListener('click', async () => {
+      btnRefreshAdminRequests.classList.add('spinning');
+      await loadDataFromCloud();
+      setTimeout(() => {
+        btnRefreshAdminRequests.classList.remove('spinning');
+      }, 600);
     });
   }
 

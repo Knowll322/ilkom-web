@@ -1583,10 +1583,13 @@
 
         <!-- List Request Edit Profil -->
         <div id="adminRequestsTab" class="admin-form-tab" style="display:none">
-          <div class="board-header" style="margin-bottom:1rem">
-            <span class="board-badge">🔔 APPROVAL PENGURUS</span>
-            <h3>Daftar Permintaan Edit Profil Mahasiswa</h3>
-            <p style="font-size:0.85rem; color:var(--text-muted)">Setujui permintaan mahasiswa untuk mengizinkan mereka mengubah foto/bio sebanyak 1x edit.</p>
+          <div class="board-header" style="margin-bottom:1rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem">
+            <div>
+              <span class="board-badge">🔔 APPROVAL PENGURUS</span>
+              <h3 style="margin-bottom:0.25rem">Daftar Permintaan Edit Profil Mahasiswa</h3>
+              <p style="font-size:0.85rem; color:var(--text-muted)">Setujui permintaan mahasiswa untuk mengizinkan mereka mengubah foto/bio sebanyak 1x edit.</p>
+            </div>
+            <button id="btnRefreshAdminRequests" class="btn-refresh-req"><span>🔄</span> Refresh Data (Sync Cloud)</button>
           </div>
           <div id="adminRequestsList" class="admin-requests-list">
             <div class="empty-schedule-card">
