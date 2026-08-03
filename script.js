@@ -1099,8 +1099,26 @@ window.addEventListener('load', () => {
     deadlines: 'ilkom_admin_deadlines_v1',
     announcements: 'ilkom_admin_announcements_v1',
     karyas: 'ilkom_admin_karyas_v1',
-    news: 'ilkom_admin_news_v1'
+    news: 'ilkom_admin_news_v1',
+    memberProfiles: 'ilkom_member_profiles_v1'
   };
+
+  function getMemberProfiles() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.memberProfiles);
+      return data ? JSON.parse(data) : {};
+    } catch(e) {
+      return {};
+    }
+  }
+
+  function saveMemberProfiles(profiles) {
+    try {
+      localStorage.setItem(STORAGE_KEYS.memberProfiles, JSON.stringify(profiles));
+    } catch(e) {
+      console.error(e);
+    }
+  }
 
   const DEFAULT_INITIAL_DATA = {
     schedules: [
@@ -1151,7 +1169,8 @@ window.addEventListener('load', () => {
       deadlines: getStoredData(STORAGE_KEYS.deadlines),
       announcements: getStoredData(STORAGE_KEYS.announcements),
       karyas: getStoredData(STORAGE_KEYS.karyas),
-      news: getStoredData(STORAGE_KEYS.news)
+      news: getStoredData(STORAGE_KEYS.news),
+      memberProfiles: getMemberProfiles()
     };
 
     try {
@@ -1189,6 +1208,9 @@ window.addEventListener('load', () => {
           if (Array.isArray(cloudData.news)) {
             saveStoredData(STORAGE_KEYS.news, cloudData.news);
           }
+          if (cloudData.memberProfiles && typeof cloudData.memberProfiles === 'object') {
+            saveMemberProfiles(cloudData.memberProfiles);
+          }
           refreshUIFromLocalStorage();
         }
       }
@@ -1219,6 +1241,41 @@ window.addEventListener('load', () => {
 
     const savedNews = getStoredData(STORAGE_KEYS.news);
     savedNews.forEach(item => renderNewsCardDOM(item, false));
+
+    // Member Profiles auto-population & edit button attachment
+    const memberProfiles = getMemberProfiles();
+    document.querySelectorAll('.member-card').forEach(card => {
+      const nimElem = card.querySelector('.mem-nim');
+      if (!nimElem) return;
+      const nimText = nimElem.textContent.replace('NIM:', '').trim();
+      
+      // Ensure Edit Button exists
+      if (!card.querySelector('.btn-edit-member')) {
+        const btn = document.createElement('button');
+        btn.className = 'btn-edit-member';
+        btn.setAttribute('data-nim', nimText);
+        btn.innerHTML = '✏️ Edit Profil Saya';
+        btn.addEventListener('click', () => openMemberEditModal(card, nimText));
+        card.appendChild(btn);
+      }
+
+      // Apply stored profile updates if present
+      const prof = memberProfiles[nimText];
+      if (prof) {
+        if (prof.img) {
+          const img = card.querySelector('.mem-photo');
+          if (img) img.src = prof.img;
+        }
+        if (prof.bio) {
+          const bio = card.querySelector('.mem-bio');
+          if (bio) bio.textContent = `"${prof.bio}"`;
+        }
+        if (prof.instagram) {
+          const soc = card.querySelector('.mem-soc');
+          if (soc) soc.href = prof.instagram;
+        }
+      }
+    });
   }
 
   // Render Functions
@@ -1683,6 +1740,92 @@ window.addEventListener('load', () => {
 
         const beritaSec = document.getElementById('berita');
         if (beritaSec) beritaSec.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
+
+  // ==========================================
+  // MEMBER PROFILE EDIT MODAL HANDLER (PER-NIM AUTH)
+  // ==========================================
+  let activeEditCard = null;
+  let activeEditNIM = '';
+
+  function openMemberEditModal(card, nim) {
+    activeEditCard = card;
+    activeEditNIM = nim;
+
+    const nameElem = card.querySelector('h4');
+    const bioElem = card.querySelector('.mem-bio');
+    const socElem = card.querySelector('.mem-soc');
+
+    document.getElementById('memEditTargetName').textContent = nameElem ? nameElem.textContent : 'Edit Profil Mahasiswa';
+    document.getElementById('memEditTargetNIM').textContent = `NIM: ${nim}`;
+    document.getElementById('memEditBio').value = bioElem ? bioElem.textContent.replace(/"/g, '') : '';
+    document.getElementById('memEditInstagram').value = socElem ? socElem.href : '';
+    document.getElementById('memEditPhotoUrl').value = '';
+    document.getElementById('memEditAuthPin').value = '';
+    document.getElementById('memEditFileInput').value = '';
+
+    const modal = document.getElementById('memberEditModalBackdrop');
+    if (modal) modal.style.display = 'flex';
+  }
+
+  const memberEditModalClose = document.getElementById('memberEditModalClose');
+  if (memberEditModalClose) {
+    memberEditModalClose.addEventListener('click', () => {
+      const modal = document.getElementById('memberEditModalBackdrop');
+      if (modal) modal.style.display = 'none';
+    });
+  }
+
+  const memberEditForm = document.getElementById('memberEditForm');
+  if (memberEditForm) {
+    memberEditForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const authPin = document.getElementById('memEditAuthPin').value.trim();
+      const nimClean = activeEditNIM.trim();
+      const nimShort = nimClean.split('.').pop(); // e.g. 03415 or 03425
+
+      // Verify NIM password match or master admin PIN 2008
+      const isValid = (authPin === nimClean || authPin === nimShort || authPin === nimShort.replace(/^0+/, '') || authPin === '2008');
+
+      if (!isValid) {
+        alert(`❌ Password/NIM Salah! Masukkan NIM Anda (${nimClean} atau ${nimShort}) untuk mengedit profil ini.`);
+        return;
+      }
+
+      const bio = document.getElementById('memEditBio').value.trim();
+      const instagram = document.getElementById('memEditInstagram').value.trim();
+      const urlPhoto = document.getElementById('memEditPhotoUrl').value.trim();
+      const fileInput = document.getElementById('memEditFileInput');
+      const userFile = fileInput && fileInput.files && fileInput.files[0];
+
+      const saveProfileObj = (imgData) => {
+        const profiles = getMemberProfiles();
+        const currentProf = profiles[nimClean] || {};
+        profiles[nimClean] = {
+          img: imgData || currentProf.img || '',
+          bio: bio,
+          instagram: instagram
+        };
+        saveMemberProfiles(profiles);
+        syncAllDataToCloud();
+        refreshUIFromLocalStorage();
+
+        alert(`✅ Profil ${document.getElementById('memEditTargetName').textContent} berhasil diperbarui dan di-sync ke Cloud!`);
+        const modal = document.getElementById('memberEditModalBackdrop');
+        if (modal) modal.style.display = 'none';
+      };
+
+      if (userFile) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          saveProfileObj(evt.target.result);
+        };
+        reader.readAsDataURL(userFile);
+      } else {
+        const finalPhoto = urlPhoto ? formatImageURL(urlPhoto) : '';
+        saveProfileObj(finalPhoto);
       }
     });
   }

@@ -1583,6 +1583,53 @@
     </div>
   </div>
 
+  <!-- Modal Edit Profil Mahasiswa Mandiri (Authentication via NIM) -->
+  <div class="member-edit-modal-backdrop" id="memberEditModalBackdrop" style="display:none">
+    <div class="member-edit-card">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title">
+          <span class="admin-icon">🎓</span>
+          <div>
+            <h3 id="memEditTargetName">Edit Profil Mahasiswa</h3>
+            <span class="admin-sub" id="memEditTargetNIM">NIM: A15.2026.XXXXX</span>
+          </div>
+        </div>
+        <button class="admin-modal-close" id="memberEditModalClose">✕</button>
+      </div>
+
+      <form id="memberEditForm" style="padding: 1.5rem">
+        <div class="admin-form-group">
+          <label>🔒 Verifikasi Password (NIM Lengkap / 5 Angka Terakhir NIM)</label>
+          <input type="password" id="memEditAuthPin" placeholder="Masukkan NIM Anda (cth: A15.2026.03415 atau 03415)" required>
+        </div>
+
+        <hr style="margin: 1rem 0; border: none; border-top: 1px solid var(--card-border)">
+
+        <div class="admin-form-group">
+          <label>📁 Upload Foto Profil Baru (HP / Laptop)</label>
+          <input type="file" id="memEditFileInput" accept="image/*" class="admin-file-picker">
+        </div>
+
+        <div class="admin-form-group">
+          <label>🌐 ATAU Tempel Link Foto Profil (URL)</label>
+          <input type="text" id="memEditPhotoUrl" placeholder="Atau tempel link URL foto">
+        </div>
+
+        <div class="admin-form-group">
+          <label>💬 Bio / Quote Status Semboyan</label>
+          <input type="text" id="memEditBio" placeholder="Contoh: Broadcasting & strategi komunikasi." required>
+        </div>
+
+        <div class="admin-form-group">
+          <label>📸 Link Instagram Profil</label>
+          <input type="text" id="memEditInstagram" placeholder="Contoh: https://instagram.com/username" required>
+        </div>
+
+        <button type="submit" class="btn-admin-submit">💾 Simpan Profil Saya</button>
+      </form>
+    </div>
+  </div>
+
   <!-- GSAP + Plugins -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
