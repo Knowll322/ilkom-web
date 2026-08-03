@@ -1175,12 +1175,40 @@ window.addEventListener('load', () => {
     }
   }
 
-  function saveStoredData(key, data) {
-    try {
-      localStorage.setItem(key, JSON.stringify(data));
-    } catch(e) {
-      console.error(e);
-    }
+  function compressAndConvertImage(file, maxWidth = 500, maxHeight = 500, quality = 0.75) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => resolve(e.target.result);
+        img.src = e.target.result;
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
   }
 
   // Cloud Sync Handler
@@ -1961,11 +1989,9 @@ window.addEventListener('load', () => {
       };
 
       if (userFile) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          saveProfileObj(evt.target.result);
-        };
-        reader.readAsDataURL(userFile);
+        compressAndConvertImage(userFile, 450, 450, 0.75).then(compressedData => {
+          saveProfileObj(compressedData);
+        });
       } else {
         const finalPhoto = urlPhoto ? formatImageURL(urlPhoto) : '';
         saveProfileObj(finalPhoto);
@@ -2017,5 +2043,9 @@ window.addEventListener('load', () => {
       if (modal) modal.style.display = 'none';
     });
   }
+
+  // Realtime Cloud Synchronization across all devices (Every 4 seconds)
+  loadDataFromCloud();
+  setInterval(loadDataFromCloud, 4000);
 });
 
