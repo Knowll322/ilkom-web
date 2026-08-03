@@ -1086,6 +1086,9 @@ window.addEventListener('load', () => {
         document.getElementById('adminKaryaForm').style.display = 'block';
       } else if (targetTab === 'news') {
         document.getElementById('adminNewsForm').style.display = 'block';
+      } else if (targetTab === 'req') {
+        document.getElementById('adminRequestsTab').style.display = 'block';
+        renderAdminRequestsList();
       }
     });
   });
@@ -1100,7 +1103,8 @@ window.addEventListener('load', () => {
     announcements: 'ilkom_admin_announcements_v1',
     karyas: 'ilkom_admin_karyas_v1',
     news: 'ilkom_admin_news_v1',
-    memberProfiles: 'ilkom_member_profiles_v1'
+    memberProfiles: 'ilkom_member_profiles_v1',
+    editRequests: 'ilkom_edit_requests_v1'
   };
 
   function getMemberProfiles() {
@@ -1115,6 +1119,23 @@ window.addEventListener('load', () => {
   function saveMemberProfiles(profiles) {
     try {
       localStorage.setItem(STORAGE_KEYS.memberProfiles, JSON.stringify(profiles));
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  function getEditRequests() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.editRequests);
+      return data ? JSON.parse(data) : {};
+    } catch(e) {
+      return {};
+    }
+  }
+
+  function saveEditRequests(requests) {
+    try {
+      localStorage.setItem(STORAGE_KEYS.editRequests, JSON.stringify(requests));
     } catch(e) {
       console.error(e);
     }
@@ -1170,7 +1191,8 @@ window.addEventListener('load', () => {
       announcements: getStoredData(STORAGE_KEYS.announcements),
       karyas: getStoredData(STORAGE_KEYS.karyas),
       news: getStoredData(STORAGE_KEYS.news),
-      memberProfiles: getMemberProfiles()
+      memberProfiles: getMemberProfiles(),
+      editRequests: getEditRequests()
     };
 
     try {
@@ -1211,6 +1233,9 @@ window.addEventListener('load', () => {
           if (cloudData.memberProfiles && typeof cloudData.memberProfiles === 'object') {
             saveMemberProfiles(cloudData.memberProfiles);
           }
+          if (cloudData.editRequests && typeof cloudData.editRequests === 'object') {
+            saveEditRequests(cloudData.editRequests);
+          }
           refreshUIFromLocalStorage();
         }
       }
@@ -1242,21 +1267,56 @@ window.addEventListener('load', () => {
     const savedNews = getStoredData(STORAGE_KEYS.news);
     savedNews.forEach(item => renderNewsCardDOM(item, false));
 
-    // Member Profiles auto-population & edit button attachment
+    // Update Admin Request Badge count
+    const editRequests = getEditRequests();
+    let pendingCount = 0;
+    Object.values(editRequests).forEach(req => {
+      if (req.status === 'pending') pendingCount++;
+    });
+
+    const admReqBadge = document.getElementById('admReqBadge');
+    if (admReqBadge) {
+      if (pendingCount > 0) {
+        admReqBadge.textContent = pendingCount;
+        admReqBadge.style.display = 'inline-block';
+      } else {
+        admReqBadge.style.display = 'none';
+      }
+    }
+
+    renderAdminRequestsList();
+
+    // Member Profiles & Dynamic Request/Edit Button Attachment
     const memberProfiles = getMemberProfiles();
     document.querySelectorAll('.member-card').forEach(card => {
       const nimElem = card.querySelector('.mem-nim');
       if (!nimElem) return;
       const nimText = nimElem.textContent.replace('NIM:', '').trim();
+      const nameElem = card.querySelector('h4');
+      const studentName = nameElem ? nameElem.textContent : 'Mahasiswa';
       
-      // Ensure Edit Button exists
-      if (!card.querySelector('.btn-edit-member')) {
-        const btn = document.createElement('button');
-        btn.className = 'btn-edit-member';
-        btn.setAttribute('data-nim', nimText);
-        btn.innerHTML = '✏️ Edit Profil Saya';
-        btn.addEventListener('click', () => openMemberEditModal(card, nimText));
+      let btn = card.querySelector('.btn-member-action');
+      if (!btn) {
+        btn = document.createElement('button');
+        btn.className = 'btn-member-action';
         card.appendChild(btn);
+      }
+
+      const reqStatus = editRequests[nimText] ? editRequests[nimText].status : '';
+
+      if (reqStatus === 'approved') {
+        btn.className = 'btn-member-action btn-edit-approved';
+        btn.innerHTML = '✨ Edit Profil (Izin 1x Aktif)';
+        btn.onclick = () => openMemberEditModal(card, nimText);
+      } else if (reqStatus === 'pending') {
+        btn.className = 'btn-member-action btn-request-member';
+        btn.style.opacity = '0.7';
+        btn.innerHTML = '⏳ Request Terkirim (Menunggu Admin)';
+        btn.onclick = () => alert('⏳ Permintaan edit profil Anda sedang menunggu persetujuan Ketua Kelas / Admin.');
+      } else {
+        btn.className = 'btn-member-action btn-request-member';
+        btn.innerHTML = '📩 Request Edit Profil';
+        btn.onclick = () => openStudentRequestModal(card, nimText, studentName);
       }
 
       // Apply stored profile updates if present
@@ -1276,6 +1336,73 @@ window.addEventListener('load', () => {
         }
       }
     });
+  }
+
+  function renderAdminRequestsList() {
+    const listContainer = document.getElementById('adminRequestsList');
+    if (!listContainer) return;
+
+    const requests = getEditRequests();
+    const pendingReqs = Object.values(requests).filter(r => r.status === 'pending');
+
+    if (pendingReqs.length === 0) {
+      listContainer.innerHTML = `
+        <div class="empty-schedule-card">
+          <span class="empty-icon">🔔</span>
+          <p>Belum Ada Permintaan Edit Profil</p>
+          <span class="empty-hint">Jika ada anggota kelas yang klik "Request Edit Profil", permintaannya akan muncul di sini.</span>
+        </div>
+      `;
+      return;
+    }
+
+    listContainer.innerHTML = '';
+    pendingReqs.forEach(req => {
+      const card = document.createElement('div');
+      card.className = 'request-item-card';
+      card.innerHTML = `
+        <div class="request-item-info">
+          <h4>👤 ${req.name}</h4>
+          <p>NIM: <strong>${req.nim}</strong> · Status: ⏳ Menunggu Persetujuan</p>
+        </div>
+        <div class="request-item-actions">
+          <button class="btn-approve-req" data-nim="${req.nim}">✅ Setujui (Izinkan 1x Edit)</button>
+          <button class="btn-reject-req" data-nim="${req.nim}">❌ Tolak</button>
+        </div>
+      `;
+
+      card.querySelector('.btn-approve-req').addEventListener('click', () => {
+        approveEditRequest(req.nim, req.name);
+      });
+
+      card.querySelector('.btn-reject-req').addEventListener('click', () => {
+        rejectEditRequest(req.nim, req.name);
+      });
+
+      listContainer.appendChild(card);
+    });
+  }
+
+  function approveEditRequest(nim, name) {
+    const reqs = getEditRequests();
+    if (reqs[nim]) {
+      reqs[nim].status = 'approved';
+      saveEditRequests(reqs);
+      syncAllDataToCloud();
+      refreshUIFromLocalStorage();
+      alert(`✅ Permintaan ${name} (NIM: ${nim}) berhasil disetujui! Mahasiswa sekarang memiliki akses 1x edit profil.`);
+    }
+  }
+
+  function rejectEditRequest(nim, name) {
+    const reqs = getEditRequests();
+    if (reqs[nim]) {
+      reqs[nim].status = 'rejected';
+      saveEditRequests(reqs);
+      syncAllDataToCloud();
+      refreshUIFromLocalStorage();
+      alert(`❌ Permintaan ${name} ditolak.`);
+    }
   }
 
   // Render Functions
@@ -1817,10 +1944,18 @@ window.addEventListener('load', () => {
           instagram: instagram
         };
         saveMemberProfiles(profiles);
+
+        // Consume 1x edit permission!
+        const reqs = getEditRequests();
+        if (reqs[nimClean]) {
+          reqs[nimClean].status = 'consumed';
+          saveEditRequests(reqs);
+        }
+
         syncAllDataToCloud();
         refreshUIFromLocalStorage();
 
-        alert(`✅ Profil ${document.getElementById('memEditTargetName').textContent} berhasil diperbarui dan di-sync ke Cloud!`);
+        alert(`✅ Profil ${document.getElementById('memEditTargetName').textContent} berhasil diperbarui (Akses 1x edit telah digunakan)!`);
         const modal = document.getElementById('memberEditModalBackdrop');
         if (modal) modal.style.display = 'none';
       };
@@ -1835,6 +1970,51 @@ window.addEventListener('load', () => {
         const finalPhoto = urlPhoto ? formatImageURL(urlPhoto) : '';
         saveProfileObj(finalPhoto);
       }
+    });
+  }
+
+  // Student Request Modal Handlers
+  let activeReqNIM = '';
+  let activeReqName = '';
+
+  function openStudentRequestModal(card, nim, name) {
+    activeReqNIM = nim;
+    activeReqName = name;
+
+    const reqNameEl = document.getElementById('reqTargetName');
+    const reqNIMEl = document.getElementById('reqTargetNIM');
+    if (reqNameEl) reqNameEl.textContent = `Request Edit: ${name}`;
+    if (reqNIMEl) reqNIMEl.textContent = `NIM: ${nim}`;
+
+    const modal = document.getElementById('studentRequestModalBackdrop');
+    if (modal) modal.style.display = 'flex';
+  }
+
+  const studentRequestModalClose = document.getElementById('studentRequestModalClose');
+  if (studentRequestModalClose) {
+    studentRequestModalClose.addEventListener('click', () => {
+      const modal = document.getElementById('studentRequestModalBackdrop');
+      if (modal) modal.style.display = 'none';
+    });
+  }
+
+  const btnSubmitStudentRequest = document.getElementById('btnSubmitStudentRequest');
+  if (btnSubmitStudentRequest) {
+    btnSubmitStudentRequest.addEventListener('click', () => {
+      const reqs = getEditRequests();
+      reqs[activeReqNIM] = {
+        nim: activeReqNIM,
+        name: activeReqName,
+        status: 'pending',
+        requestedAt: Date.now()
+      };
+      saveEditRequests(reqs);
+      syncAllDataToCloud();
+      refreshUIFromLocalStorage();
+
+      alert(`✅ Permintaan edit profil (${activeReqName}) berhasil dikirim ke Ketua Kelas (Admin)! Silakan tunggu persetujuan.`);
+      const modal = document.getElementById('studentRequestModalBackdrop');
+      if (modal) modal.style.display = 'none';
     });
   }
 });

@@ -1396,6 +1396,7 @@
         <button class="admin-tab" data-adm-tab="ann">📌 Post Pengumuman</button>
         <button class="admin-tab" data-adm-tab="karya">🎨 Input Karya Mahasiswa</button>
         <button class="admin-tab" data-adm-tab="news">📰 Post Berita & Event</button>
+        <button class="admin-tab" data-adm-tab="req">🔔 Request Edit Profil <span id="admReqBadge" class="req-badge" style="display:none">0</span></button>
       </div>
 
       <div class="admin-modal-body">
@@ -1579,11 +1580,50 @@
           </div>
           <button type="submit" class="btn-admin-submit">📰 Post Berita & Event Kampus</button>
         </form>
+
+        <!-- List Request Edit Profil -->
+        <div id="adminRequestsTab" class="admin-form-tab" style="display:none">
+          <div class="board-header" style="margin-bottom:1rem">
+            <span class="board-badge">🔔 APPROVAL PENGURUS</span>
+            <h3>Daftar Permintaan Edit Profil Mahasiswa</h3>
+            <p style="font-size:0.85rem; color:var(--text-muted)">Setujui permintaan mahasiswa untuk mengizinkan mereka mengubah foto/bio sebanyak 1x edit.</p>
+          </div>
+          <div id="adminRequestsList" class="admin-requests-list">
+            <div class="empty-schedule-card">
+              <span class="empty-icon">🔔</span>
+              <p>Belum Ada Permintaan Edit Profil</p>
+              <span class="empty-hint">Jika ada anggota kelas yang klik "Request Edit Profil", permintaannya akan muncul di sini.</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal Edit Profil Mahasiswa Mandiri (Authentication via NIM) -->
+  <!-- Modal Request Edit Profil (Student Side) -->
+  <div class="member-edit-modal-backdrop" id="studentRequestModalBackdrop" style="display:none">
+    <div class="member-edit-card">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title">
+          <span class="admin-icon">📩</span>
+          <div>
+            <h3 id="reqTargetName">Request Edit Profil</h3>
+            <span class="admin-sub" id="reqTargetNIM">NIM: A15.2026.XXXXX</span>
+          </div>
+        </div>
+        <button class="admin-modal-close" id="studentRequestModalClose">✕</button>
+      </div>
+
+      <div style="padding: 1.5rem; text-align: center">
+        <p style="font-size:0.95rem; color:var(--text-body); line-height:1.6; margin-bottom:1.5rem">
+          Kirimkan permintaan ke <strong>Ketua Kelas / Admin</strong> untuk mendapatkan akses <strong>1x Edit Profil</strong> (Foto, Bio, Instagram).
+        </p>
+        <button id="btnSubmitStudentRequest" class="btn-admin-submit">📩 Kirim Permintaan ke Admin</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Edit Profil Mahasiswa Mandiri -->
   <div class="member-edit-modal-backdrop" id="memberEditModalBackdrop" style="display:none">
     <div class="member-edit-card">
       <div class="admin-modal-header">
