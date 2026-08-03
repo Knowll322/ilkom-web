@@ -989,5 +989,180 @@ window.addEventListener('load', () => {
       });
     });
   }
+
+  // ==========================================
+  // SECRET ADMIN PANEL (FOR KETUA KELAS)
+  // ==========================================
+  const secretAdminBtn = document.getElementById('secretAdminBtn');
+  const secretFooterLock = document.getElementById('secretFooterLock');
+  const adminModalBackdrop = document.getElementById('adminModalBackdrop');
+  const adminModalClose = document.getElementById('adminModalClose');
+  const SECRET_PIN = '1234'; // Default Secret PIN for Ketua Kelas (Zain)
+
+  function openAdminModal() {
+    const pin = prompt('🔒 RAHASIA PENGURUS KELAS\nMasukkan PIN Secret Admin (Ketua Kelas):\n(Default PIN: 1234)');
+    if (pin === null) return; // User cancelled
+    if (pin.trim() === SECRET_PIN || pin.trim() === 'zain' || pin.trim() === 'naurah') {
+      if (adminModalBackdrop) {
+        adminModalBackdrop.style.display = 'flex';
+      }
+    } else {
+      alert('❌ PIN Salah! Akses khusus Ketua Kelas & Pengurus.');
+    }
+  }
+
+  if (secretAdminBtn) secretAdminBtn.addEventListener('click', openAdminModal);
+  if (secretFooterLock) secretFooterLock.addEventListener('click', openAdminModal);
+
+  // Secret keyboard shortcut: Shift + A
+  document.addEventListener('keydown', (e) => {
+    if (e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+      openAdminModal();
+    }
+  });
+
+  if (adminModalClose) {
+    adminModalClose.addEventListener('click', () => {
+      if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+    });
+  }
+
+  // Admin Modal Tab Switcher
+  const adminTabs = document.querySelectorAll('.admin-tab');
+  const adminFormTabs = document.querySelectorAll('.admin-form-tab');
+
+  adminTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      adminTabs.forEach(t => t.classList.remove('active'));
+      adminFormTabs.forEach(f => f.style.display = 'none');
+
+      tab.classList.add('active');
+      const targetTab = tab.getAttribute('data-adm-tab');
+      if (targetTab === 'sch') {
+        document.getElementById('adminScheduleForm').style.display = 'block';
+      } else if (targetTab === 'dl') {
+        document.getElementById('adminDeadlineForm').style.display = 'block';
+      } else if (targetTab === 'ann') {
+        document.getElementById('adminAnnouncementForm').style.display = 'block';
+      }
+    });
+  });
+
+  // Admin Schedule Submit Handler
+  const adminScheduleForm = document.getElementById('adminScheduleForm');
+  if (adminScheduleForm) {
+    adminScheduleForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const day = document.getElementById('admSchDay').value;
+      const time = document.getElementById('admSchTime').value;
+      const room = document.getElementById('admSchRoom').value;
+      const title = document.getElementById('admSchTitle').value;
+      const lecturer = document.getElementById('admSchLecturer').value;
+      const status = document.getElementById('admSchStatus').value;
+
+      const targetGroup = document.querySelector(`.day-schedule-group[data-day-group="${day}"]`);
+      if (targetGroup) {
+        const card = document.createElement('div');
+        card.className = 'schedule-card';
+        card.innerHTML = `
+          <div class="sch-time">
+            <span class="sch-clock">🕒 ${time}</span>
+            <span class="sch-room">📍 ${room}</span>
+          </div>
+          <div class="sch-info">
+            <h4>${title}</h4>
+            <p>👨‍🏫 ${lecturer}</p>
+          </div>
+          ${status ? `<span class="sch-status status-alert">${status}</span>` : ''}
+          <button class="card-delete-btn" onclick="this.closest('.schedule-card').remove(); alert('Jadwal berhasil dihapus!');">🗑️ Hapus</button>
+        `;
+        targetGroup.appendChild(card);
+        alert(`✅ Jadwal "${title}" hari ${day.toUpperCase()} berhasil ditambahkan!`);
+        adminScheduleForm.reset();
+        if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+
+        // Switch to the target day tab to show the new schedule!
+        const dayBtn = document.querySelector(`.day-btn[data-day="${day}"]`);
+        if (dayBtn) dayBtn.click();
+      }
+    });
+  }
+
+  // Admin Deadline Submit Handler
+  const adminDeadlineForm = document.getElementById('adminDeadlineForm');
+  const deadlineGrid = document.querySelector('.deadline-grid');
+  if (adminDeadlineForm && deadlineGrid) {
+    adminDeadlineForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('admDlTitle').value;
+      const subj = document.getElementById('admDlSubj').value;
+      const category = document.getElementById('admDlCategory').value;
+      const dateStr = document.getElementById('admDlDate').value;
+      const urgency = document.getElementById('admDlUrgency').value;
+
+      let badgeText = '🔴 URGENT';
+      if (urgency === 'warning') badgeText = '🟡 MINGGU INI';
+      if (urgency === 'info') badgeText = '🔵 UTS / UAS';
+      if (urgency === 'success') badgeText = '🟢 SELESAI';
+
+      const card = document.createElement('div');
+      card.className = `deadline-card ${urgency}`;
+      card.setAttribute('data-dl-type', category);
+      card.innerHTML = `
+        <div class="dl-badge">${badgeText}</div>
+        <h4>${title}</h4>
+        <p>${subj}</p>
+        <div class="dl-footer">
+          <span>📅 ${dateStr}</span>
+          <span class="dl-status-badge">Aktif</span>
+          <button class="card-delete-btn" onclick="this.closest('.deadline-card').remove(); alert('Tugas berhasil dihapus!');">🗑️ Hapus</button>
+        </div>
+      `;
+
+      deadlineGrid.prepend(card);
+      alert(`✅ Tugas/Deadline "${title}" berhasil ditambahkan ke Kalender!`);
+      adminDeadlineForm.reset();
+      if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+
+      // Switch to Kalender Tugas tab
+      const tugasTab = document.querySelector('.portal-tab[data-tab="tugas"]');
+      if (tugasTab) tugasTab.click();
+    });
+  }
+
+  // Admin Announcement Submit Handler
+  const adminAnnouncementForm = document.getElementById('adminAnnouncementForm');
+  const announcementBoard = document.querySelector('.announcement-board');
+  if (adminAnnouncementForm && announcementBoard) {
+    adminAnnouncementForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('admAnnTitle').value;
+      const content = document.getElementById('admAnnContent').value;
+      const tag = document.getElementById('admAnnTag').value;
+      const author = document.getElementById('admAnnAuthor').value;
+
+      let tagLabel = '⚠️ URGENT';
+      if (tag === 'tag-info') tagLabel = 'ℹ️ AKADEMIK';
+      if (tag === 'tag-event') tagLabel = '🎉 KAS & EVENT';
+
+      const card = document.createElement('div');
+      card.className = 'announcement-card pinned';
+      card.innerHTML = `
+        <div class="ann-tag ${tag}">${tagLabel}</div>
+        <h4>${title}</h4>
+        <p>${content}</p>
+        <div class="ann-meta">
+          <span>👤 ${author}</span>
+          <span>🕒 Baru saja</span>
+          <button class="card-delete-btn" onclick="this.closest('.announcement-card').remove(); alert('Pengumuman dihapus!');">🗑️ Hapus</button>
+        </div>
+      `;
+
+      announcementBoard.appendChild(card);
+      alert(`📢 Pengumuman "${title}" berhasil di-post!`);
+      adminAnnouncementForm.reset();
+      if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+    });
+  }
 });
 

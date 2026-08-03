@@ -38,6 +38,7 @@
         <li><a href="#kontak" data-text="Kontak">Kontak</a></li>
       </ul>
       <div class="nav-right">
+        <button class="secret-admin-trigger" id="secretAdminBtn" title="Portal Secret Admin Pengurus">🔒</button>
         <a href="#kontak" class="nav-cta">Daftar Sekarang →</a>
         <button class="hamburger" id="hamburger" aria-label="Menu">
           <span></span><span></span>
@@ -1533,7 +1534,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2026 Ilmu Komunikasi UDINUS · All rights reserved</p>
+        <p>© 2026 Ilmu Komunikasi UDINUS · All rights reserved <span class="secret-footer-lock" id="secretFooterLock" title="Ketua Kelas Access">🔒</span></p>
         <a href="#hero" class="back-top">Kembali ke Atas ↑</a>
       </div>
     </div>
@@ -1542,6 +1543,140 @@
   <!-- Floating CTA -->
   <div class="floating-cta" id="floatingCta">
     <a href="#peminatan" class="float-btn">Lihat Peminatan ✦</a>
+  </div>
+
+  <!-- Hidden Admin Panel Modal -->
+  <div class="admin-modal-backdrop" id="adminModalBackdrop" style="display:none">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title">
+          <span class="admin-icon">🔒</span>
+          <div>
+            <h3>Panel Admin Pengurus Kelas</h3>
+            <span class="admin-sub">Mode Rahasia Ketua Kelas & Pengurus</span>
+          </div>
+        </div>
+        <button class="admin-modal-close" id="adminModalClose">✕</button>
+      </div>
+
+      <div class="admin-modal-tabs">
+        <button class="admin-tab active" data-adm-tab="sch">📅 Input Jadwal Kuliah</button>
+        <button class="admin-tab" data-adm-tab="dl">📝 Input Tugas / Deadline</button>
+        <button class="admin-tab" data-adm-tab="ann">📌 Post Pengumuman</button>
+      </div>
+
+      <div class="admin-modal-body">
+        <!-- Form Jadwal Kuliah -->
+        <form id="adminScheduleForm" class="admin-form-tab active">
+          <div class="admin-form-group">
+            <label>Hari Kuliah</label>
+            <select id="admSchDay" required>
+              <option value="senin">Senin</option>
+              <option value="selasa">Selasa</option>
+              <option value="rabu">Rabu</option>
+              <option value="kamis">Kamis</option>
+              <option value="jumat">Jumat</option>
+            </select>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Jam Perkuliahan</label>
+              <input type="text" id="admSchTime" placeholder="Contoh: 08.40 - 11.10" required>
+            </div>
+            <div class="admin-form-group">
+              <label>Kode Ruang</label>
+              <input type="text" id="admSchRoom" placeholder="Contoh: Ruang H.3.4" required>
+            </div>
+          </div>
+          <div class="admin-form-group">
+            <label>Nama Mata Kuliah</label>
+            <input type="text" id="admSchTitle" placeholder="Contoh: Strategi Komunikasi Digital" required>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Dosen Pengampu & SKS</label>
+              <input type="text" id="admSchLecturer" placeholder="Contoh: Dr. Lisa Mardiana · 3 SKS" required>
+            </div>
+            <div class="admin-form-group">
+              <label>Status / Catatan Ruang</label>
+              <select id="admSchStatus">
+                <option value="">Normal (Tidak ada catatan)</option>
+                <option value="Hari Ini">Hari Ini</option>
+                <option value="Pindah Ruang">Pindah Ruang</option>
+                <option value="Dosen Halangan">Dosen Halangan</option>
+                <option value="Kuliah Online">Kuliah Online</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-admin-submit">➕ Simpan Jadwal Kuliah</button>
+        </form>
+
+        <!-- Form Deadlines & Tugas -->
+        <form id="adminDeadlineForm" class="admin-form-tab" style="display:none">
+          <div class="admin-form-group">
+            <label>Judul Tugas / Ujian</label>
+            <input type="text" id="admDlTitle" placeholder="Contoh: Makalah PR & Media Deck" required>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Mata Kuliah & Dosen</label>
+              <input type="text" id="admDlSubj" placeholder="Contoh: Public Relations · M. Fikri, M.A." required>
+            </div>
+            <div class="admin-form-group">
+              <label>Kategori Tugas</label>
+              <select id="admDlCategory">
+                <option value="tugas">Tugas & Makalah</option>
+                <option value="uts">UTS & UAS</option>
+                <option value="quiz">Quiz / Presentasi</option>
+              </select>
+            </div>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Tanggal & Jam Deadline</label>
+              <input type="text" id="admDlDate" placeholder="Contoh: 05 Agustus 2026, 23.59 WIB" required>
+            </div>
+            <div class="admin-form-group">
+              <label>Tingkat Urgensi / Status</label>
+              <select id="admDlUrgency">
+                <option value="urgent">🔴 Urgent / H-2 (Merah)</option>
+                <option value="warning">🟡 Minggu Ini (Kuning)</option>
+                <option value="info">🔵 UTS / UAS (Biru)</option>
+                <option value="success">🟢 Selesai (Hijau)</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-admin-submit">➕ Simpan Deadline / Tugas</button>
+        </form>
+
+        <!-- Form Pengumuman -->
+        <form id="adminAnnouncementForm" class="admin-form-tab" style="display:none">
+          <div class="admin-form-group">
+            <label>Judul Pengumuman</label>
+            <input type="text" id="admAnnTitle" placeholder="Contoh: Pengumpulan Project Film Pendek" required>
+          </div>
+          <div class="admin-form-group">
+            <label>Isi Pengumuman</label>
+            <textarea id="admAnnContent" rows="3" placeholder="Tuliskan pengumuman resmi untuk seluruh anggota kelas..." required></textarea>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Tag Kategori</label>
+              <select id="admAnnTag">
+                <option value="tag-urgent">⚠️ URGENT</option>
+                <option value="tag-info">ℹ️ AKADEMIK</option>
+                <option value="tag-event">🎉 KAS & EVENT</option>
+              </select>
+            </div>
+            <div class="admin-form-group">
+              <label>Pengirim</label>
+              <input type="text" id="admAnnAuthor" value="Zain Yarfa Mubarok (Ketua Kelas)" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-admin-submit">📢 Post Pengumuman Kelas</button>
+        </form>
+      </div>
+    </div>
   </div>
 
   <!-- GSAP + Plugins -->
