@@ -1299,6 +1299,21 @@ window.addEventListener('load', () => {
     }
   }
 
+  function sendStudentRequestDirectly(nim, name) {
+    if (!nim) return;
+    const reqs = getEditRequests();
+    reqs[nim] = {
+      nim: nim,
+      name: name,
+      status: 'pending',
+      requestedAt: Date.now()
+    };
+    saveEditRequests(reqs);
+    syncAllDataToCloud();
+    refreshUIFromLocalStorage();
+    alert(`✅ Request Edit Profil untuk ${name} (NIM: ${nim}) BERHASIL DIKIRIM ke Ketua Kelas / Admin!`);
+  }
+
   function refreshUIFromLocalStorage() {
     // Clear dynamic items before re-rendering
     document.querySelectorAll('.schedule-card').forEach(el => el.remove());
@@ -1326,7 +1341,7 @@ window.addEventListener('load', () => {
     const editRequests = getEditRequests();
     let pendingCount = 0;
     Object.values(editRequests).forEach(req => {
-      if (req.status === 'pending') pendingCount++;
+      if (req && req.status === 'pending' && req.nim) pendingCount++;
     });
 
     const admReqBadge = document.getElementById('admReqBadge');
@@ -1373,14 +1388,18 @@ window.addEventListener('load', () => {
         btn.onclick = () => openMemberEditModal(card, nimText);
       } else if (reqStatus === 'pending') {
         btn.className = 'btn-member-action btn-request-member';
-        btn.style.opacity = '0.8';
-        btn.innerHTML = '⏳ Request Terkirim (Menunggu Admin)';
-        btn.onclick = () => alert('⏳ Permintaan edit profil Anda sedang menunggu persetujuan Ketua Kelas / Admin.');
+        btn.style.opacity = '0.85';
+        btn.innerHTML = '⏳ Request Terkirim (Klik utk Kirim Ulang)';
+        btn.onclick = () => {
+          if (confirm(`🔄 Anda sudah mengirim request edit. Ingin meng-kirim ulang request (${studentName})?`)) {
+            sendStudentRequestDirectly(nimText, studentName);
+          }
+        };
       } else {
         btn.className = 'btn-member-action btn-request-member';
         btn.style.opacity = '1';
         btn.innerHTML = '📩 Request Edit Profil';
-        btn.onclick = () => openStudentRequestModal(card, nimText, studentName);
+        btn.onclick = () => sendStudentRequestDirectly(nimText, studentName);
       }
 
       // Apply stored profile updates if present
@@ -1407,7 +1426,7 @@ window.addEventListener('load', () => {
     if (!listContainer) return;
 
     const requests = getEditRequests();
-    const pendingReqs = Object.values(requests).filter(r => r.status === 'pending');
+    const pendingReqs = Object.values(requests).filter(r => r && r.status === 'pending' && r.nim);
 
     if (pendingReqs.length === 0) {
       listContainer.innerHTML = `
