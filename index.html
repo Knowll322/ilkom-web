@@ -1395,6 +1395,7 @@
         <button class="admin-tab" data-adm-tab="dl">📝 Input Tugas / Deadline</button>
         <button class="admin-tab" data-adm-tab="ann">📌 Post Pengumuman</button>
         <button class="admin-tab" data-adm-tab="karya">🎨 Input Karya Mahasiswa</button>
+        <button class="admin-tab" data-adm-tab="news">📰 Post Berita & Event</button>
       </div>
 
       <div class="admin-modal-body">
@@ -1545,6 +1546,38 @@
             <input type="text" id="admKaryaImg" placeholder="Atau tempel link gambar (Opsional jika sudah upload file)">
           </div>
           <button type="submit" class="btn-admin-submit">🎨 Simpan Karya Mahasiswa</button>
+        </form>
+
+        <!-- Form Berita & Event -->
+        <form id="adminNewsForm" class="admin-form-tab" style="display:none">
+          <div class="admin-form-group">
+            <label>Judul Berita atau Event</label>
+            <input type="text" id="admNewsTitle" placeholder="Contoh: Seminar Komunikasi Digital & AI 2026" required>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Kategori / Tag</label>
+              <select id="admNewsTag" required>
+                <option value="tag-seminar">🎤 Seminar</option>
+                <option value="tag-lomba">🏆 Lomba / Kompetisi</option>
+                <option value="tag-workshop">💡 Workshop</option>
+                <option value="tag-pengumuman">📢 Pengumuman Resmi</option>
+              </select>
+            </div>
+            <div class="admin-form-group">
+              <label>Tanggal Berita / Event</label>
+              <input type="text" id="admNewsDate" placeholder="Contoh: 15 Agustus 2026" required>
+            </div>
+          </div>
+          <div class="admin-form-group">
+            <label>📁 Upload Gambar Sampul Berita dari HP / Laptop</label>
+            <input type="file" id="admNewsFileInput" accept="image/*" class="admin-file-picker">
+          </div>
+          <div class="admin-form-group">
+            <label>🌐 ATAU Tempel Link Gambar Berita (URL)</label>
+            <input type="text" id="admNewsImg" placeholder="Atau tempel link gambar (Opsional jika sudah upload file)">
+          </div>
+          <button type="submit" class="btn-admin-submit">📰 Post Berita & Event Kampus</button>
         </form>
       </div>
     </div>
