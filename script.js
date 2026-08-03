@@ -239,6 +239,17 @@ window.addEventListener('load', () => {
     drawCanvas();
   }
 
+  // 9. React Bits <Orb /> WebGL Component Initialization
+  if (typeof window.initOrb === 'function') {
+    window.initOrb('orbCanvas', {
+      hue: 210, // UDINUS Blue hue
+      hoverIntensity: 0.5,
+      rotateOnHover: true,
+      forceHoverState: false,
+      backgroundColor: '#FFFFFF'
+    });
+  }
+
   // 10. Sticker Parallax (GSAP + mousemove)
   const stickers = document.querySelectorAll('.sticker[data-speed]');
   if (!isTouchDevice && stickers.length) {
