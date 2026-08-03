@@ -250,6 +250,29 @@ window.addEventListener('load', () => {
     });
   }
 
+  // 9b. React Bits <FaultyTerminal /> WebGL Component Initialization
+  if (typeof window.initFaultyTerminal === 'function') {
+    window.initFaultyTerminal('terminalCanvas', {
+      scale: 1.5,
+      gridMul: [2, 1],
+      digitSize: 1.2,
+      timeScale: 0.3,
+      pause: false,
+      scanlineIntensity: 0.4,
+      glitchAmount: 0.5,
+      flickerAmount: 0.3,
+      noiseAmp: 0.5,
+      chromaticAberration: 0,
+      dither: 0.2,
+      curvature: 0.1,
+      tint: '#60A5FA', // Cyan/Blue terminal tint
+      mouseReact: !isTouchDevice,
+      mouseStrength: 0.3,
+      pageLoadAnimation: true,
+      brightness: 1.0
+    });
+  }
+
   // 10. Sticker Parallax (GSAP + mousemove)
   const stickers = document.querySelectorAll('.sticker[data-speed]');
   if (!isTouchDevice && stickers.length) {

@@ -179,13 +179,26 @@
 
         <!-- Fasilitas bento: col-span 6 -->
         <div class="bento-card bento-facilities scroll-reveal" data-delay="2">
-          <h3>Fasilitas Unggulan</h3>
-          <div class="facility-chips">
-            <span class="chip">📺 TVKU</span>
-            <span class="chip">📻 Dinus FM</span>
-            <span class="chip">🎬 Lab Mirror Training</span>
-            <span class="chip">🗣️ Lab Bahasa</span>
-            <span class="chip">🎭 Teater Hall</span>
+          <div class="facilities-header">
+            <h3>Fasilitas Unggulan</h3>
+            <div class="facility-chips">
+              <span class="chip">📺 TVKU</span>
+              <span class="chip">📻 Dinus FM</span>
+              <span class="chip">🎬 Lab Mirror Training</span>
+              <span class="chip">🗣️ Lab Bahasa</span>
+              <span class="chip">🎭 Teater Hall</span>
+            </div>
+          </div>
+          <div class="terminal-monitor">
+            <div class="terminal-header">
+              <span class="term-dot red"></span>
+              <span class="term-dot yellow"></span>
+              <span class="term-dot green"></span>
+              <span class="term-title">UDINUS_LAB // MATRIX_STREAM</span>
+            </div>
+            <div class="terminal-canvas-box">
+              <canvas id="terminalCanvas" class="faulty-terminal-container"></canvas>
+            </div>
           </div>
         </div>
 
@@ -1679,6 +1692,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   <!-- React Bits Orb WebGL -->
   <script src="orb.js"></script>
+  <!-- React Bits FaultyTerminal WebGL -->
+  <script src="faulty-terminal.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
