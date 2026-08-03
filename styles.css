@@ -1666,12 +1666,14 @@ body {
   box-shadow: 0 8px 25px rgba(0, 61, 165, 0.4);
 }
 
+/* Delete button hidden by default for regular members */
 .card-delete-btn {
+  display: none !important;
   background: #EF4444;
   color: var(--white);
   border: none;
   border-radius: var(--radius-full);
-  padding: 0.25rem 0.6rem;
+  padding: 0.25rem 0.65rem;
   font-size: 0.7rem;
   font-weight: 700;
   cursor: pointer;
@@ -1680,6 +1682,52 @@ body {
 }
 .card-delete-btn:hover {
   background: #DC2626;
+}
+
+/* Delete button visible ONLY when Admin Mode is active */
+body.admin-active .card-delete-btn {
+  display: inline-block !important;
+}
+
+/* Admin Active Mode Top Banner */
+.admin-mode-banner {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10001;
+  background: linear-gradient(135deg, #003DA5, #001A4D);
+  color: #FFB800;
+  padding: 0.45rem 1.25rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  border-bottom: 2px solid #FFB800;
+}
+body.admin-active .admin-mode-banner {
+  display: flex;
+}
+body.admin-active .navbar {
+  top: 32px;
+}
+.admin-mode-banner button {
+  background: rgba(255,255,255,0.2);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+.admin-mode-banner button:hover {
+  background: var(--gold);
+  color: var(--text-dark);
 }
 
 /* Empty State Cards */

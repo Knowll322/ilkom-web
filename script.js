@@ -991,21 +991,55 @@ window.addEventListener('load', () => {
   }
 
   // ==========================================
-  // SECRET ADMIN PANEL (FOR KETUA KELAS)
+  // SECRET ADMIN PANEL & LOGIN STATE MANAGEMENT
   // ==========================================
   const secretAdminBtn = document.getElementById('secretAdminBtn');
   const secretFooterLock = document.getElementById('secretFooterLock');
   const adminModalBackdrop = document.getElementById('adminModalBackdrop');
   const adminModalClose = document.getElementById('adminModalClose');
+  const openAdminPanelBtn = document.getElementById('openAdminPanelBtn');
+  const exitAdminBtn = document.getElementById('exitAdminBtn');
   const SECRET_PIN = '1234'; // Default Secret PIN for Ketua Kelas (Zain)
 
+  function activateAdminMode() {
+    document.body.classList.add('admin-active');
+    sessionStorage.setItem('ilkom_admin_mode', 'true');
+    if (adminModalBackdrop) {
+      adminModalBackdrop.style.display = 'flex';
+    }
+  }
+
+  function deactivateAdminMode() {
+    document.body.classList.remove('admin-active');
+    sessionStorage.removeItem('ilkom_admin_mode');
+    if (adminModalBackdrop) {
+      adminModalBackdrop.style.display = 'none';
+    }
+    alert('🔒 Anda telah keluar dari Mode Admin.');
+  }
+
+  function checkAdminLoginState() {
+    if (sessionStorage.getItem('ilkom_admin_mode') === 'true') {
+      document.body.classList.add('admin-active');
+    } else {
+      document.body.classList.remove('admin-active');
+    }
+  }
+
+  checkAdminLoginState();
+
   function openAdminModal() {
+    // If already in admin mode, just open the modal directly
+    if (document.body.classList.contains('admin-active')) {
+      if (adminModalBackdrop) adminModalBackdrop.style.display = 'flex';
+      return;
+    }
+
     const pin = prompt('🔒 RAHASIA PENGURUS KELAS\nMasukkan PIN Secret Admin (Ketua Kelas):\n(Default PIN: 1234)');
     if (pin === null) return; // User cancelled
     if (pin.trim() === SECRET_PIN || pin.trim() === 'zain' || pin.trim() === 'naurah') {
-      if (adminModalBackdrop) {
-        adminModalBackdrop.style.display = 'flex';
-      }
+      activateAdminMode();
+      alert('👑 SELAMAT DATANG KETUA KELAS!\nMode Admin Aktif. Tombol hapus dan form pengisian jadwal/tugas sekarang dapat Anda akses.');
     } else {
       alert('❌ PIN Salah! Akses khusus Ketua Kelas & Pengurus.');
     }
@@ -1013,6 +1047,10 @@ window.addEventListener('load', () => {
 
   if (secretAdminBtn) secretAdminBtn.addEventListener('click', openAdminModal);
   if (secretFooterLock) secretFooterLock.addEventListener('click', openAdminModal);
+  if (openAdminPanelBtn) openAdminPanelBtn.addEventListener('click', () => {
+    if (adminModalBackdrop) adminModalBackdrop.style.display = 'flex';
+  });
+  if (exitAdminBtn) exitAdminBtn.addEventListener('click', deactivateAdminMode);
 
   // Secret keyboard shortcut: Shift + A
   document.addEventListener('keydown', (e) => {
