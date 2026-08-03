@@ -1979,3 +1979,181 @@ body.admin-active .navbar {
   border: 1px solid var(--card-border);
   animation: modalPop 0.3s var(--bounce);
 }
+
+
+/* ==========================================
+   ENHANCEMENTS - ADDED VIA AGENT
+   ========================================== */
+:root {
+  --glow-blue: 0 0 20px rgba(0,61,165,0.3), 0 0 60px rgba(0,61,165,0.1);
+  --glow-gold: 0 0 20px rgba(255,184,0,0.3), 0 0 60px rgba(255,184,0,0.1);
+  --card-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,61,165,0.06), 0 16px 40px rgba(0,61,165,0.04);
+}
+
+@keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+@keyframes ringRotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes float3D { 0%,100%{transform:translateY(0) rotateX(0)} 25%{transform:translateY(-15px) rotateX(2deg)} 75%{transform:translateY(5px) rotateX(-1deg)} }
+@keyframes borderGlow { 0%,100%{box-shadow: 0 0 5px rgba(0,61,165,0.2)} 50%{box-shadow: 0 0 20px rgba(0,61,165,0.4), 0 0 40px rgba(255,184,0,0.1)} }
+@keyframes textGlow { 0%,100%{text-shadow:0 0 10px rgba(255,184,0,0.3)} 50%{text-shadow:0 0 25px rgba(255,184,0,0.6), 0 0 50px rgba(255,184,0,0.2)} }
+@keyframes countUpReveal { 0%{opacity:0; transform:translateY(20px)} 100%{opacity:1; transform:translateY(0)} }
+
+/* 2. HERO SECTION */
+.hero {
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  will-change: background-position;
+}
+.hero::after {
+  content: ''; position: absolute; inset: 0;
+  background: conic-gradient(from 180deg at 50% 50%, rgba(0,61,165,0.15) 0deg, rgba(255,184,0,0.1) 180deg, rgba(0,61,165,0.15) 360deg);
+  mix-blend-mode: overlay; pointer-events: none; z-index: 1;
+}
+.hero-title {
+  animation: textGlow 4s ease-in-out infinite;
+}
+.sticker {
+  animation: float3D 6s ease-in-out infinite;
+  will-change: transform;
+}
+.hero-ticker {
+  position: absolute; overflow: hidden;
+}
+.hero-ticker::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  animation: shimmer 3s infinite; pointer-events: none;
+}
+
+/* 3. CARDS */
+.bento-card, .member-card, .schedule-card, .deadline-card {
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+  position: relative;
+}
+.bento-card:hover, .member-card:hover, .schedule-card:hover, .deadline-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: var(--glow-blue), inset 0 0 10px rgba(255,184,0,0.15);
+}
+.bento-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 2px;
+  background: linear-gradient(135deg, var(--blue), var(--gold));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity 0.4s var(--ease); pointer-events: none;
+}
+.bento-card:hover::before { opacity: 1; }
+
+/* 4. NAVBAR */
+.navbar.scrolled {
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--gold), transparent) 1;
+}
+.nav-links a::after { transform-origin: left; }
+.nav-links.active {
+  backdrop-filter: blur(15px);
+}
+@media (max-width: 768px) {
+  .nav-links a { opacity: 0; transform: translateX(20px); transition: all 0.4s ease; }
+  .nav-links.active a { opacity: 1; transform: translateX(0); }
+  .nav-links.active a:nth-child(1) { transition-delay: 0.1s; }
+  .nav-links.active a:nth-child(2) { transition-delay: 0.2s; }
+  .nav-links.active a:nth-child(3) { transition-delay: 0.3s; }
+  .nav-links.active a:nth-child(4) { transition-delay: 0.4s; }
+}
+
+/* 5. SECTION TRANSITIONS */
+.section { position: relative; }
+.section::before {
+  content: ''; display: block; position: absolute; top: -40px; left: 0; width: 100%; height: 40px;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' opacity='.25' fill='%23f8faff'/%3E%3Cpath d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z' opacity='.5' fill='%23f8faff'/%3E%3Cpath d='M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z' fill='%23f8faff'/%3E%3C/svg%3E") no-repeat center center;
+  background-size: cover; z-index: 10;
+}
+.section-alt {
+  background-image: radial-gradient(rgba(0,61,165,0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* 6. BUTTONS */
+.btn-hero-primary, .nav-cta, .form-submit {
+  position: relative; overflow: hidden; will-change: transform; backface-visibility: hidden;
+}
+.btn-hero-primary::after, .nav-cta::after, .form-submit::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: skewX(-20deg); transition: 0s;
+}
+.btn-hero-primary:hover::after, .nav-cta:hover::after, .form-submit:hover::after {
+  left: 200%; transition: 0.7s ease-in-out;
+}
+.btn-hero-primary:hover, .nav-cta:hover, .form-submit:hover {
+  transform: scale(1.05) translateY(-4px) !important;
+}
+
+/* 7. MEMBER CARDS */
+.mem-photo-wrap { transition: transform 0.6s var(--ease); }
+.member-card:hover .mem-photo-wrap { animation: ringRotate 8s linear infinite; }
+.member-card:hover .mem-photo { animation: ringRotate 8s linear infinite reverse; } /* prevent photo from rotating */
+.member-card h4 { transition: text-decoration 0.3s; }
+.member-card:hover h4 { text-decoration: underline wavy var(--gold); }
+
+/* 8. PEMINATAN SECTION */
+.peminatan-mega::after {
+  content: ''; position: absolute; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold); opacity: 0.6; animation: float3D 4s infinite;
+  top: 15%; right: 15%;
+}
+.peminatan-mega::before {
+  content: ''; position: absolute; width: 4px; height: 4px; border-radius: 50%;
+  background: var(--blue-light); opacity: 0.6; animation: float3D 5s infinite reverse;
+  bottom: 20%; left: 10%;
+}
+
+/* 9. STATS SECTION */
+.stat-big-num { animation: countUpReveal 1.5s var(--ease) both; }
+.funfact-strip { position: relative; z-index: 1; overflow: hidden; }
+.funfact-strip::before {
+  content: ''; position: absolute; inset: -5px; border-radius: inherit;
+  background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+  background-size: 200% 200%; animation: gradientShift 5s linear infinite;
+  z-index: -1; opacity: 0; transition: opacity 0.3s;
+}
+.funfact-strip:hover::before { opacity: 1; }
+.funfact-strip > * { position: relative; z-index: 2; }
+.funfact-strip:hover { background: rgba(0,0,0,0.8); }
+
+/* 10. FOOTER */
+.footer {
+  background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+.footer-logo { animation: textGlow 4s infinite; }
+.footer-col a { position: relative; display: inline-block; transition: all 0.3s; }
+.footer-col a::before {
+  content: '→'; position: absolute; left: -15px; opacity: 0; transition: all 0.3s;
+}
+.footer-col a:hover { transform: translateX(15px); color: var(--gold); }
+.footer-col a:hover::before { opacity: 1; }
+
+/* 12. PORTAL SECTION */
+.portal-tab.active { position: relative; }
+.portal-tab.active::after {
+  content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+  width: 24px; height: 4px; background: var(--gold); border-radius: 2px;
+  animation: pulse 2s infinite;
+}
+
+/* 13. SCROLL REVEAL */
+.scroll-reveal { filter: blur(10px); will-change: opacity, transform, filter; }
+.scroll-reveal.revealed { filter: blur(0); }
+
+/* 14. OVERALL POLISH */
+::selection { background: var(--gold); color: var(--text-dark); text-shadow: none; }
+.section-dark, .stats-section, #peminatan, .footer {
+  position: relative;
+}
+.section-dark::before, .stats-section::before, #peminatan::before, .footer::before {
+  content: ''; position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
