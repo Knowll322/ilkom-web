@@ -1082,6 +1082,8 @@ window.addEventListener('load', () => {
         document.getElementById('adminDeadlineForm').style.display = 'block';
       } else if (targetTab === 'ann') {
         document.getElementById('adminAnnouncementForm').style.display = 'block';
+      } else if (targetTab === 'karya') {
+        document.getElementById('adminKaryaForm').style.display = 'block';
       }
     });
   });
@@ -1093,7 +1095,8 @@ window.addEventListener('load', () => {
   const STORAGE_KEYS = {
     schedules: 'ilkom_admin_schedules_v1',
     deadlines: 'ilkom_admin_deadlines_v1',
-    announcements: 'ilkom_admin_announcements_v1'
+    announcements: 'ilkom_admin_announcements_v1',
+    karyas: 'ilkom_admin_karyas_v1'
   };
 
   function getStoredData(key) {
@@ -1118,7 +1121,8 @@ window.addEventListener('load', () => {
     const payload = {
       schedules: getStoredData(STORAGE_KEYS.schedules),
       deadlines: getStoredData(STORAGE_KEYS.deadlines),
-      announcements: getStoredData(STORAGE_KEYS.announcements)
+      announcements: getStoredData(STORAGE_KEYS.announcements),
+      karyas: getStoredData(STORAGE_KEYS.karyas)
     };
 
     try {
@@ -1150,6 +1154,9 @@ window.addEventListener('load', () => {
           if (Array.isArray(cloudData.announcements)) {
             saveStoredData(STORAGE_KEYS.announcements, cloudData.announcements);
           }
+          if (Array.isArray(cloudData.karyas)) {
+            saveStoredData(STORAGE_KEYS.karyas, cloudData.karyas);
+          }
           refreshUIFromLocalStorage();
         }
       }
@@ -1163,6 +1170,7 @@ window.addEventListener('load', () => {
     document.querySelectorAll('.schedule-card').forEach(el => el.remove());
     document.querySelectorAll('.deadline-card').forEach(el => el.remove());
     document.querySelectorAll('.announcement-card').forEach(el => el.remove());
+    document.querySelectorAll('.karya-item.custom-karya').forEach(el => el.remove());
 
     const savedSchedules = getStoredData(STORAGE_KEYS.schedules);
     savedSchedules.forEach(item => renderScheduleCardDOM(item, false));
@@ -1172,6 +1180,9 @@ window.addEventListener('load', () => {
 
     const savedAnnouncements = getStoredData(STORAGE_KEYS.announcements);
     savedAnnouncements.forEach(item => renderAnnouncementCardDOM(item, false));
+
+    const savedKaryas = getStoredData(STORAGE_KEYS.karyas);
+    savedKaryas.forEach(item => renderKaryaCardDOM(item, false));
   }
 
   // Render Functions
@@ -1219,7 +1230,6 @@ window.addEventListener('load', () => {
     saveStoredData(STORAGE_KEYS.schedules, saved);
     syncAllDataToCloud();
 
-    // If day group becomes empty, show empty state again
     const targetGroup = document.querySelector(`.day-schedule-group[data-day-group="${day}"]`);
     if (targetGroup && targetGroup.querySelectorAll('.schedule-card').length === 0) {
       const emptyCard = targetGroup.querySelector('.empty-schedule-card');
@@ -1338,6 +1348,51 @@ window.addEventListener('load', () => {
     alert('Pengumuman berhasil dihapus!');
   }
 
+  function renderKaryaCardDOM(item, isNew = false) {
+    const karyaTrack = document.getElementById('karyaTrack');
+    if (!karyaTrack) return;
+
+    const card = document.createElement('div');
+    card.className = 'karya-item custom-karya';
+    card.setAttribute('data-category', item.category);
+    card.setAttribute('data-id', item.id);
+
+    const isGradient = item.img && (item.img.includes('linear-gradient') || item.img.includes('gradient'));
+    const bgStyle = isGradient ? item.img : `url('${item.img}')`;
+
+    card.innerHTML = `
+      <div class="karya-img" style="background:${isGradient ? bgStyle : 'none'}; ${!isGradient ? `background-image:url('${item.img}')` : ''}"></div>
+      <div class="karya-info">
+        <span class="karya-cat">${item.category.toUpperCase()}</span>
+        <h4>${item.title}</h4>
+        <p>${item.desc}</p>
+        <button class="card-delete-btn" data-karya-id="${item.id}">🗑️ Hapus Karya</button>
+      </div>
+    `;
+
+    card.querySelector('.card-delete-btn').addEventListener('click', () => {
+      deleteKaryaItem(item.id, card);
+    });
+
+    karyaTrack.prepend(card);
+
+    if (isNew) {
+      const saved = getStoredData(STORAGE_KEYS.karyas);
+      saved.unshift(item);
+      saveStoredData(STORAGE_KEYS.karyas, saved);
+      syncAllDataToCloud();
+    }
+  }
+
+  function deleteKaryaItem(id, cardElement) {
+    cardElement.remove();
+    let saved = getStoredData(STORAGE_KEYS.karyas);
+    saved = saved.filter(i => i.id !== id);
+    saveStoredData(STORAGE_KEYS.karyas, saved);
+    syncAllDataToCloud();
+    alert('Karya berhasil dihapus!');
+  }
+
   // Initial load: render local first, then fetch live cloud data!
   refreshUIFromLocalStorage();
   loadDataFromCloud();
@@ -1409,6 +1464,30 @@ window.addEventListener('load', () => {
       alert(`📢 Pengumuman "${item.title}" berhasil di-post ke Cloud (Semua Perangkat)!`);
       adminAnnouncementForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+    });
+  }
+
+  // Admin Karya Submit Handler
+  const adminKaryaForm = document.getElementById('adminKaryaForm');
+  if (adminKaryaForm) {
+    adminKaryaForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const item = {
+        id: 'karya_' + Date.now(),
+        title: document.getElementById('admKaryaTitle').value,
+        desc: document.getElementById('admKaryaDesc').value,
+        category: document.getElementById('admKaryaCategory').value,
+        img: document.getElementById('admKaryaImg').value
+      };
+
+      renderKaryaCardDOM(item, true);
+      alert(`🎨 Karya "${item.title}" berhasil ditambahkan ke Showcase dan di-sync ke Cloud!`);
+      adminKaryaForm.reset();
+      if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+
+      // Scroll to #karya section smoothly
+      const karyaSec = document.getElementById('karya');
+      if (karyaSec) karyaSec.scrollIntoView({ behavior: 'smooth' });
     });
   }
 });

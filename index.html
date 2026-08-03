@@ -1434,6 +1434,7 @@
         <button class="admin-tab active" data-adm-tab="sch">📅 Input Jadwal Kuliah</button>
         <button class="admin-tab" data-adm-tab="dl">📝 Input Tugas / Deadline</button>
         <button class="admin-tab" data-adm-tab="ann">📌 Post Pengumuman</button>
+        <button class="admin-tab" data-adm-tab="karya">🎨 Input Karya Mahasiswa</button>
       </div>
 
       <div class="admin-modal-body">
@@ -1545,6 +1546,34 @@
             </div>
           </div>
           <button type="submit" class="btn-admin-submit">📢 Post Pengumuman Kelas</button>
+        </form>
+
+        <!-- Form Karya Mahasiswa -->
+        <form id="adminKaryaForm" class="admin-form-tab" style="display:none">
+          <div class="admin-form-group">
+            <label>Judul Karya / Project</label>
+            <input type="text" id="admKaryaTitle" placeholder="Contoh: Short Film: Koneksi" required>
+          </div>
+          <div class="admin-form-group">
+            <label>Deskripsi Singkat Karya</label>
+            <input type="text" id="admKaryaDesc" placeholder="Contoh: Film pendek buatan mahasiswa kelompok 2" required>
+          </div>
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Kategori Karya</label>
+              <select id="admKaryaCategory" required>
+                <option value="video">Video</option>
+                <option value="desain">Desain</option>
+                <option value="campaign">Campaign</option>
+                <option value="podcast">Podcast</option>
+              </select>
+            </div>
+            <div class="admin-form-group">
+              <label>URL / File Gambar Karya</label>
+              <input type="text" id="admKaryaImg" placeholder="Contoh: 1.jpeg, 4.jpeg atau URL Gambar" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-admin-submit">🎨 Simpan Karya Mahasiswa</button>
         </form>
       </div>
     </div>
