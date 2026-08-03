@@ -1379,10 +1379,10 @@ window.addEventListener('load', () => {
 
     const formattedImg = formatImageURL(item.img);
     const isGradient = formattedImg && (formattedImg.includes('linear-gradient') || formattedImg.includes('gradient'));
-    const isCover = item.fitMode === 'cover';
+    const isContain = item.fitMode === 'contain';
 
     card.innerHTML = `
-      <div class="karya-img ${isCover ? 'fit-cover' : ''}" style="background:${isGradient ? formattedImg : 'none'}; ${!isGradient ? `background-image:url('${formattedImg}')` : ''}"></div>
+      <div class="karya-img ${isContain ? 'fit-contain' : ''}" style="background:${isGradient ? formattedImg : 'none'}; ${!isGradient ? `background-image:url('${formattedImg}')` : ''}"></div>
       <div class="karya-info">
         <span class="karya-cat">${item.category.toUpperCase()}</span>
         <h4>${item.title}</h4>
