@@ -1265,7 +1265,8 @@ window.addEventListener('load', () => {
   async function loadDataFromCloud() {
     try {
       const res = await fetch(CLOUD_API_URL, {
-        headers: { 'Accept': 'application/json' }
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
       });
       if (res.ok) {
         const cloudData = await res.json();
@@ -1290,16 +1291,22 @@ window.addEventListener('load', () => {
           }
           if (cloudData.editRequests && typeof cloudData.editRequests === 'object') {
             saveEditRequests(cloudData.editRequests);
+            const pendingCount = Object.values(cloudData.editRequests).filter(r => r && r.status === 'pending' && r.nim).length;
+            console.log('☁️ Cloud editRequests loaded:', pendingCount, 'pending requests');
           }
           refreshUIFromLocalStorage();
         }
+      } else {
+        console.warn('☁️ Cloud response not OK:', res.status);
+        refreshUIFromLocalStorage();
       }
     } catch(err) {
       console.warn('Cloud load error, loading local data:', err);
+      refreshUIFromLocalStorage();
     }
   }
 
-  function sendStudentRequestDirectly(nim, name) {
+  async function sendStudentRequestDirectly(nim, name) {
     if (!nim) return;
     const reqs = getEditRequests();
     reqs[nim] = {
@@ -1309,116 +1316,131 @@ window.addEventListener('load', () => {
       requestedAt: Date.now()
     };
     saveEditRequests(reqs);
-    syncAllDataToCloud();
     refreshUIFromLocalStorage();
+    await syncAllDataToCloud();
     alert(`✅ Request Edit Profil untuk ${name} (NIM: ${nim}) BERHASIL DIKIRIM ke Ketua Kelas / Admin!`);
   }
 
   function refreshUIFromLocalStorage() {
     // Clear dynamic items before re-rendering
-    document.querySelectorAll('.schedule-card').forEach(el => el.remove());
-    document.querySelectorAll('.deadline-card').forEach(el => el.remove());
-    document.querySelectorAll('.announcement-card').forEach(el => el.remove());
-    document.querySelectorAll('.karya-item.custom-karya').forEach(el => el.remove());
-    document.querySelectorAll('.news-card').forEach(el => el.remove());
+    try { document.querySelectorAll('.schedule-card').forEach(el => el.remove()); } catch(e) {}
+    try { document.querySelectorAll('.deadline-card').forEach(el => el.remove()); } catch(e) {}
+    try { document.querySelectorAll('.announcement-card').forEach(el => el.remove()); } catch(e) {}
+    try { document.querySelectorAll('.karya-item.custom-karya').forEach(el => el.remove()); } catch(e) {}
+    try { document.querySelectorAll('.news-card').forEach(el => el.remove()); } catch(e) {}
 
-    const savedSchedules = getStoredData(STORAGE_KEYS.schedules);
-    savedSchedules.forEach(item => renderScheduleCardDOM(item, false));
+    try {
+      const savedSchedules = getStoredData(STORAGE_KEYS.schedules);
+      savedSchedules.forEach(item => renderScheduleCardDOM(item, false));
+    } catch(e) { console.warn('Schedule render error:', e); }
 
-    const savedDeadlines = getStoredData(STORAGE_KEYS.deadlines);
-    savedDeadlines.forEach(item => renderDeadlineCardDOM(item, false));
+    try {
+      const savedDeadlines = getStoredData(STORAGE_KEYS.deadlines);
+      savedDeadlines.forEach(item => renderDeadlineCardDOM(item, false));
+    } catch(e) { console.warn('Deadline render error:', e); }
 
-    const savedAnnouncements = getStoredData(STORAGE_KEYS.announcements);
-    savedAnnouncements.forEach(item => renderAnnouncementCardDOM(item, false));
+    try {
+      const savedAnnouncements = getStoredData(STORAGE_KEYS.announcements);
+      savedAnnouncements.forEach(item => renderAnnouncementCardDOM(item, false));
+    } catch(e) { console.warn('Announcement render error:', e); }
 
-    const savedKaryas = getStoredData(STORAGE_KEYS.karyas);
-    savedKaryas.forEach(item => renderKaryaCardDOM(item, false));
+    try {
+      const savedKaryas = getStoredData(STORAGE_KEYS.karyas);
+      savedKaryas.forEach(item => renderKaryaCardDOM(item, false));
+    } catch(e) { console.warn('Karya render error:', e); }
 
-    const savedNews = getStoredData(STORAGE_KEYS.news);
-    savedNews.forEach(item => renderNewsCardDOM(item, false));
+    try {
+      const savedNews = getStoredData(STORAGE_KEYS.news);
+      savedNews.forEach(item => renderNewsCardDOM(item, false));
+    } catch(e) { console.warn('News render error:', e); }
 
     // Update Admin Request Badge count
-    const editRequests = getEditRequests();
-    let pendingCount = 0;
-    Object.values(editRequests).forEach(req => {
-      if (req && req.status === 'pending' && req.nim) pendingCount++;
-    });
+    try {
+      const editRequests = getEditRequests();
+      let pendingCount = 0;
+      Object.values(editRequests).forEach(req => {
+        if (req && req.status === 'pending' && req.nim) pendingCount++;
+      });
 
-    const admReqBadge = document.getElementById('admReqBadge');
-    if (admReqBadge) {
-      if (pendingCount > 0) {
-        admReqBadge.textContent = pendingCount;
-        admReqBadge.style.display = 'inline-block';
-      } else {
-        admReqBadge.style.display = 'none';
+      const admReqBadge = document.getElementById('admReqBadge');
+      if (admReqBadge) {
+        if (pendingCount > 0) {
+          admReqBadge.textContent = pendingCount;
+          admReqBadge.style.display = 'inline-block';
+        } else {
+          admReqBadge.style.display = 'none';
+        }
       }
-    }
 
-    renderAdminRequestsList();
+      renderAdminRequestsList();
+    } catch(e) { console.warn('Admin requests render error:', e); }
 
     // Member Profiles & Dynamic Request/Edit Button Attachment
-    const memberProfiles = getMemberProfiles();
-    const isAdminActive = document.body.classList.contains('admin-active');
+    try {
+      const editRequests = getEditRequests();
+      const memberProfiles = getMemberProfiles();
+      const isAdminActive = document.body.classList.contains('admin-active');
 
-    document.querySelectorAll('.member-card').forEach(card => {
-      const nimElem = card.querySelector('.mem-nim');
-      if (!nimElem) return;
-      const nimText = nimElem.textContent.replace('NIM:', '').trim();
-      const nameElem = card.querySelector('h4');
-      const studentName = nameElem ? nameElem.textContent : 'Mahasiswa';
-      
-      let btn = card.querySelector('.btn-member-action');
-      if (!btn) {
-        btn = document.createElement('button');
-        btn.className = 'btn-member-action';
-        card.appendChild(btn);
-      }
+      document.querySelectorAll('.member-card').forEach(card => {
+        const nimElem = card.querySelector('.mem-nim');
+        if (!nimElem) return;
+        const nimText = nimElem.textContent.replace('NIM:', '').trim();
+        const nameElem = card.querySelector('h4');
+        const studentName = nameElem ? nameElem.textContent : 'Mahasiswa';
+        
+        let btn = card.querySelector('.btn-member-action');
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.className = 'btn-member-action';
+          card.appendChild(btn);
+        }
 
-      const reqStatus = editRequests[nimText] ? editRequests[nimText].status : '';
+        const reqStatus = editRequests[nimText] ? editRequests[nimText].status : '';
 
-      if (isAdminActive) {
-        btn.className = 'btn-member-action btn-edit-approved';
-        btn.style.opacity = '1';
-        btn.innerHTML = '⚡ Edit Profil (Akses Admin)';
-        btn.onclick = () => openMemberEditModal(card, nimText);
-      } else if (reqStatus === 'approved') {
-        btn.className = 'btn-member-action btn-edit-approved';
-        btn.style.opacity = '1';
-        btn.innerHTML = '✨ Edit Profil (Izin 1x Aktif)';
-        btn.onclick = () => openMemberEditModal(card, nimText);
-      } else if (reqStatus === 'pending') {
-        btn.className = 'btn-member-action btn-request-member';
-        btn.style.opacity = '0.85';
-        btn.innerHTML = '⏳ Request Terkirim (Klik utk Kirim Ulang)';
-        btn.onclick = () => {
-          if (confirm(`🔄 Anda sudah mengirim request edit. Ingin meng-kirim ulang request (${studentName})?`)) {
-            sendStudentRequestDirectly(nimText, studentName);
+        if (isAdminActive) {
+          btn.className = 'btn-member-action btn-edit-approved';
+          btn.style.opacity = '1';
+          btn.innerHTML = '⚡ Edit Profil (Akses Admin)';
+          btn.onclick = () => openMemberEditModal(card, nimText);
+        } else if (reqStatus === 'approved') {
+          btn.className = 'btn-member-action btn-edit-approved';
+          btn.style.opacity = '1';
+          btn.innerHTML = '✨ Edit Profil (Izin 1x Aktif)';
+          btn.onclick = () => openMemberEditModal(card, nimText);
+        } else if (reqStatus === 'pending') {
+          btn.className = 'btn-member-action btn-request-member';
+          btn.style.opacity = '0.85';
+          btn.innerHTML = '⏳ Request Terkirim (Klik utk Kirim Ulang)';
+          btn.onclick = () => {
+            if (confirm(`🔄 Anda sudah mengirim request edit. Ingin meng-kirim ulang request (${studentName})?`)) {
+              sendStudentRequestDirectly(nimText, studentName);
+            }
+          };
+        } else {
+          btn.className = 'btn-member-action btn-request-member';
+          btn.style.opacity = '1';
+          btn.innerHTML = '📩 Request Edit Profil';
+          btn.onclick = () => sendStudentRequestDirectly(nimText, studentName);
+        }
+
+        // Apply stored profile updates if present
+        const prof = memberProfiles[nimText];
+        if (prof) {
+          if (prof.img) {
+            const img = card.querySelector('.mem-photo');
+            if (img) img.src = prof.img;
           }
-        };
-      } else {
-        btn.className = 'btn-member-action btn-request-member';
-        btn.style.opacity = '1';
-        btn.innerHTML = '📩 Request Edit Profil';
-        btn.onclick = () => sendStudentRequestDirectly(nimText, studentName);
-      }
-
-      // Apply stored profile updates if present
-      const prof = memberProfiles[nimText];
-      if (prof) {
-        if (prof.img) {
-          const img = card.querySelector('.mem-photo');
-          if (img) img.src = prof.img;
+          if (prof.bio) {
+            const bio = card.querySelector('.mem-bio');
+            if (bio) bio.textContent = `"${prof.bio}"`;
+          }
+          if (prof.instagram) {
+            const soc = card.querySelector('.mem-soc');
+            if (soc) soc.href = prof.instagram;
+          }
         }
-        if (prof.bio) {
-          const bio = card.querySelector('.mem-bio');
-          if (bio) bio.textContent = `"${prof.bio}"`;
-        }
-        if (prof.instagram) {
-          const soc = card.querySelector('.mem-soc');
-          if (soc) soc.href = prof.instagram;
-        }
-      }
-    });
+      });
+    } catch(e) { console.warn('Member profiles render error:', e); }
   }
 
   function renderAdminRequestsList() {
