@@ -1646,6 +1646,22 @@ body {
   background: var(--off-white);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+.admin-file-picker {
+  background: var(--blue-pale);
+  border: 2px dashed var(--blue);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  width: 100%;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--blue);
+  transition: background 0.2s;
+}
+.admin-file-picker:hover {
+  background: rgba(0,61,165,0.12);
+}
 .admin-form-group input:focus,
 .admin-form-group select:focus,
 .admin-form-group textarea:focus {

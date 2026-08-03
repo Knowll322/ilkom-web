@@ -1494,23 +1494,56 @@ window.addEventListener('load', () => {
     adminKaryaForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const fitModeElem = document.getElementById('admKaryaFitMode');
-      const item = {
-        id: 'karya_' + Date.now(),
-        title: document.getElementById('admKaryaTitle').value,
-        desc: document.getElementById('admKaryaDesc').value,
-        category: document.getElementById('admKaryaCategory').value,
-        img: document.getElementById('admKaryaImg').value,
-        fitMode: fitModeElem ? fitModeElem.value : 'cover'
-      };
+      const fileInput = document.getElementById('admKaryaFileInput');
+      const urlInput = document.getElementById('admKaryaImg');
 
-      renderKaryaCardDOM(item, true);
-      alert(`🎨 Karya "${item.title}" berhasil ditambahkan ke Showcase dan di-sync ke Cloud!`);
-      adminKaryaForm.reset();
-      if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+      const title = document.getElementById('admKaryaTitle').value;
+      const desc = document.getElementById('admKaryaDesc').value;
+      const category = document.getElementById('admKaryaCategory').value;
+      const fitMode = fitModeElem ? fitModeElem.value : 'cover';
 
-      // Scroll to #karya section smoothly
-      const karyaSec = document.getElementById('karya');
-      if (karyaSec) karyaSec.scrollIntoView({ behavior: 'smooth' });
+      const userFile = fileInput && fileInput.files && fileInput.files[0];
+
+      if (userFile) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const item = {
+            id: 'karya_' + Date.now(),
+            title: title,
+            desc: desc,
+            category: category,
+            img: evt.target.result, // base64 Data URL
+            fitMode: fitMode
+          };
+
+          renderKaryaCardDOM(item, true);
+          alert(`🎨 Karya "${title}" berhasil diunggah dari file dan di-sync ke Cloud (Semua Perangkat)!`);
+          adminKaryaForm.reset();
+          if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+
+          const karyaSec = document.getElementById('karya');
+          if (karyaSec) karyaSec.scrollIntoView({ behavior: 'smooth' });
+        };
+        reader.readAsDataURL(userFile);
+      } else {
+        const imgUrl = urlInput ? urlInput.value.trim() : '';
+        const item = {
+          id: 'karya_' + Date.now(),
+          title: title,
+          desc: desc,
+          category: category,
+          img: imgUrl || '1.jpeg',
+          fitMode: fitMode
+        };
+
+        renderKaryaCardDOM(item, true);
+        alert(`🎨 Karya "${title}" berhasil ditambahkan ke Showcase dan di-sync ke Cloud (Semua Perangkat)!`);
+        adminKaryaForm.reset();
+        if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+
+        const karyaSec = document.getElementById('karya');
+        if (karyaSec) karyaSec.scrollIntoView({ behavior: 'smooth' });
+      }
     });
   }
 });

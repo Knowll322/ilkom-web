@@ -1577,8 +1577,12 @@
             </div>
           </div>
           <div class="admin-form-group">
-            <label>URL / Link Gambar Google (Drive/Search)</label>
-            <input type="text" id="admKaryaImg" placeholder="Tempel Link Gambar dari Google atau 1.jpeg" required>
+            <label>📁 Upload Foto Langsung dari HP / Komputer</label>
+            <input type="file" id="admKaryaFileInput" accept="image/*" class="admin-file-picker">
+          </div>
+          <div class="admin-form-group">
+            <label>🌐 ATAU Tempel Link Gambar (Google / URL)</label>
+            <input type="text" id="admKaryaImg" placeholder="Atau tempel link gambar (Opsional jika sudah upload file)">
           </div>
           <button type="submit" class="btn-admin-submit">🎨 Simpan Karya Mahasiswa</button>
         </form>
