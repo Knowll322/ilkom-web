@@ -1048,83 +1048,248 @@ window.addEventListener('load', () => {
     });
   });
 
+  // ==========================================
+  // LOCALSTORAGE PERSISTENCE FOR ADMIN DATA
+  // ==========================================
+  const STORAGE_KEYS = {
+    schedules: 'ilkom_admin_schedules_v1',
+    deadlines: 'ilkom_admin_deadlines_v1',
+    announcements: 'ilkom_admin_announcements_v1'
+  };
+
+  function getStoredData(key) {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function saveStoredData(key, data) {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  // Render Functions
+  function renderScheduleCardDOM(item, isNew = false) {
+    const targetGroup = document.querySelector(`.day-schedule-group[data-day-group="${item.day}"]`);
+    if (!targetGroup) return;
+
+    const emptyCard = targetGroup.querySelector('.empty-schedule-card');
+    if (emptyCard) emptyCard.style.display = 'none';
+
+    const card = document.createElement('div');
+    card.className = 'schedule-card';
+    card.setAttribute('data-id', item.id);
+    card.innerHTML = `
+      <div class="sch-time">
+        <span class="sch-clock">🕒 ${item.time}</span>
+        <span class="sch-room">📍 ${item.room}</span>
+      </div>
+      <div class="sch-info">
+        <h4>${item.title}</h4>
+        <p>👨‍🏫 ${item.lecturer}</p>
+      </div>
+      ${item.status ? `<span class="sch-status status-alert">${item.status}</span>` : ''}
+      <button class="card-delete-btn" data-sch-id="${item.id}">🗑️ Hapus</button>
+    `;
+
+    card.querySelector('.card-delete-btn').addEventListener('click', () => {
+      deleteScheduleItem(item.id, card, item.day);
+    });
+
+    targetGroup.appendChild(card);
+
+    if (isNew) {
+      const saved = getStoredData(STORAGE_KEYS.schedules);
+      saved.push(item);
+      saveStoredData(STORAGE_KEYS.schedules, saved);
+    }
+  }
+
+  function deleteScheduleItem(id, cardElement, day) {
+    cardElement.remove();
+    let saved = getStoredData(STORAGE_KEYS.schedules);
+    saved = saved.filter(i => i.id !== id);
+    saveStoredData(STORAGE_KEYS.schedules, saved);
+
+    // If day group becomes empty, show empty state again
+    const targetGroup = document.querySelector(`.day-schedule-group[data-day-group="${day}"]`);
+    if (targetGroup && targetGroup.querySelectorAll('.schedule-card').length === 0) {
+      const emptyCard = targetGroup.querySelector('.empty-schedule-card');
+      if (emptyCard) emptyCard.style.display = 'block';
+    }
+    alert('Jadwal berhasil dihapus!');
+  }
+
+  function renderDeadlineCardDOM(item, isNew = false) {
+    const deadlineGrid = document.querySelector('.deadline-grid');
+    if (!deadlineGrid) return;
+
+    const emptyCard = deadlineGrid.querySelector('.empty-deadline-card');
+    if (emptyCard) emptyCard.style.display = 'none';
+
+    let badgeText = '🔴 URGENT';
+    if (item.urgency === 'warning') badgeText = '🟡 MINGGU INI';
+    if (item.urgency === 'info') badgeText = '🔵 UTS / UAS';
+    if (item.urgency === 'success') badgeText = '🟢 SELESAI';
+
+    const card = document.createElement('div');
+    card.className = `deadline-card ${item.urgency}`;
+    card.setAttribute('data-dl-type', item.category);
+    card.setAttribute('data-id', item.id);
+    card.innerHTML = `
+      <div class="dl-badge">${badgeText}</div>
+      <h4>${item.title}</h4>
+      <p>${item.subj}</p>
+      <div class="dl-footer">
+        <span>📅 ${item.dateStr}</span>
+        <span class="dl-status-badge">Aktif</span>
+        <button class="card-delete-btn" data-dl-id="${item.id}">🗑️ Hapus</button>
+      </div>
+    `;
+
+    card.querySelector('.card-delete-btn').addEventListener('click', () => {
+      deleteDeadlineItem(item.id, card);
+    });
+
+    deadlineGrid.prepend(card);
+
+    if (isNew) {
+      const saved = getStoredData(STORAGE_KEYS.deadlines);
+      saved.unshift(item);
+      saveStoredData(STORAGE_KEYS.deadlines, saved);
+    }
+  }
+
+  function deleteDeadlineItem(id, cardElement) {
+    cardElement.remove();
+    let saved = getStoredData(STORAGE_KEYS.deadlines);
+    saved = saved.filter(i => i.id !== id);
+    saveStoredData(STORAGE_KEYS.deadlines, saved);
+
+    const deadlineGrid = document.querySelector('.deadline-grid');
+    if (deadlineGrid && deadlineGrid.querySelectorAll('.deadline-card').length === 0) {
+      const emptyCard = deadlineGrid.querySelector('.empty-deadline-card');
+      if (emptyCard) emptyCard.style.display = 'block';
+    }
+    alert('Tugas berhasil dihapus!');
+  }
+
+  function renderAnnouncementCardDOM(item, isNew = false) {
+    const announcementBoard = document.querySelector('.announcement-board');
+    if (!announcementBoard) return;
+
+    const emptyCard = announcementBoard.querySelector('.empty-schedule-card');
+    if (emptyCard) emptyCard.style.display = 'none';
+
+    let tagLabel = '⚠️ URGENT';
+    if (item.tag === 'tag-info') tagLabel = 'ℹ️ AKADEMIK';
+    if (item.tag === 'tag-event') tagLabel = '🎉 KAS & EVENT';
+
+    const card = document.createElement('div');
+    card.className = 'announcement-card pinned';
+    card.setAttribute('data-id', item.id);
+    card.innerHTML = `
+      <div class="ann-tag ${item.tag}">${tagLabel}</div>
+      <h4>${item.title}</h4>
+      <p>${item.content}</p>
+      <div class="ann-meta">
+        <span>👤 ${item.author}</span>
+        <span>🕒 ${item.dateStr || 'Baru saja'}</span>
+        <button class="card-delete-btn" data-ann-id="${item.id}">🗑️ Hapus</button>
+      </div>
+    `;
+
+    card.querySelector('.card-delete-btn').addEventListener('click', () => {
+      deleteAnnouncementItem(item.id, card);
+    });
+
+    announcementBoard.appendChild(card);
+
+    if (isNew) {
+      const saved = getStoredData(STORAGE_KEYS.announcements);
+      saved.push(item);
+      saveStoredData(STORAGE_KEYS.announcements, saved);
+    }
+  }
+
+  function deleteAnnouncementItem(id, cardElement) {
+    cardElement.remove();
+    let saved = getStoredData(STORAGE_KEYS.announcements);
+    saved = saved.filter(i => i.id !== id);
+    saveStoredData(STORAGE_KEYS.announcements, saved);
+
+    const announcementBoard = document.querySelector('.announcement-board');
+    if (announcementBoard && announcementBoard.querySelectorAll('.announcement-card').length === 0) {
+      const emptyCard = announcementBoard.querySelector('.empty-schedule-card');
+      if (emptyCard) emptyCard.style.display = 'block';
+    }
+    alert('Pengumuman berhasil dihapus!');
+  }
+
+  // Load saved data on startup
+  function loadPersistedAdminData() {
+    const savedSchedules = getStoredData(STORAGE_KEYS.schedules);
+    savedSchedules.forEach(item => renderScheduleCardDOM(item, false));
+
+    const savedDeadlines = getStoredData(STORAGE_KEYS.deadlines);
+    savedDeadlines.forEach(item => renderDeadlineCardDOM(item, false));
+
+    const savedAnnouncements = getStoredData(STORAGE_KEYS.announcements);
+    savedAnnouncements.forEach(item => renderAnnouncementCardDOM(item, false));
+  }
+
+  loadPersistedAdminData();
+
   // Admin Schedule Submit Handler
   const adminScheduleForm = document.getElementById('adminScheduleForm');
   if (adminScheduleForm) {
     adminScheduleForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const day = document.getElementById('admSchDay').value;
-      const time = document.getElementById('admSchTime').value;
-      const room = document.getElementById('admSchRoom').value;
-      const title = document.getElementById('admSchTitle').value;
-      const lecturer = document.getElementById('admSchLecturer').value;
-      const status = document.getElementById('admSchStatus').value;
+      const item = {
+        id: 'sch_' + Date.now(),
+        day: document.getElementById('admSchDay').value,
+        time: document.getElementById('admSchTime').value,
+        room: document.getElementById('admSchRoom').value,
+        title: document.getElementById('admSchTitle').value,
+        lecturer: document.getElementById('admSchLecturer').value,
+        status: document.getElementById('admSchStatus').value
+      };
 
-      const targetGroup = document.querySelector(`.day-schedule-group[data-day-group="${day}"]`);
-      if (targetGroup) {
-        const card = document.createElement('div');
-        card.className = 'schedule-card';
-        card.innerHTML = `
-          <div class="sch-time">
-            <span class="sch-clock">🕒 ${time}</span>
-            <span class="sch-room">📍 ${room}</span>
-          </div>
-          <div class="sch-info">
-            <h4>${title}</h4>
-            <p>👨‍🏫 ${lecturer}</p>
-          </div>
-          ${status ? `<span class="sch-status status-alert">${status}</span>` : ''}
-          <button class="card-delete-btn" onclick="this.closest('.schedule-card').remove(); alert('Jadwal berhasil dihapus!');">🗑️ Hapus</button>
-        `;
-        targetGroup.appendChild(card);
-        alert(`✅ Jadwal "${title}" hari ${day.toUpperCase()} berhasil ditambahkan!`);
-        adminScheduleForm.reset();
-        if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+      renderScheduleCardDOM(item, true);
+      alert(`✅ Jadwal "${item.title}" hari ${item.day.toUpperCase()} berhasil disimpan!`);
+      adminScheduleForm.reset();
+      if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
 
-        // Switch to the target day tab to show the new schedule!
-        const dayBtn = document.querySelector(`.day-btn[data-day="${day}"]`);
-        if (dayBtn) dayBtn.click();
-      }
+      const dayBtn = document.querySelector(`.day-btn[data-day="${item.day}"]`);
+      if (dayBtn) dayBtn.click();
     });
   }
 
   // Admin Deadline Submit Handler
   const adminDeadlineForm = document.getElementById('adminDeadlineForm');
-  const deadlineGrid = document.querySelector('.deadline-grid');
-  if (adminDeadlineForm && deadlineGrid) {
+  if (adminDeadlineForm) {
     adminDeadlineForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const title = document.getElementById('admDlTitle').value;
-      const subj = document.getElementById('admDlSubj').value;
-      const category = document.getElementById('admDlCategory').value;
-      const dateStr = document.getElementById('admDlDate').value;
-      const urgency = document.getElementById('admDlUrgency').value;
+      const item = {
+        id: 'dl_' + Date.now(),
+        title: document.getElementById('admDlTitle').value,
+        subj: document.getElementById('admDlSubj').value,
+        category: document.getElementById('admDlCategory').value,
+        dateStr: document.getElementById('admDlDate').value,
+        urgency: document.getElementById('admDlUrgency').value
+      };
 
-      let badgeText = '🔴 URGENT';
-      if (urgency === 'warning') badgeText = '🟡 MINGGU INI';
-      if (urgency === 'info') badgeText = '🔵 UTS / UAS';
-      if (urgency === 'success') badgeText = '🟢 SELESAI';
-
-      const card = document.createElement('div');
-      card.className = `deadline-card ${urgency}`;
-      card.setAttribute('data-dl-type', category);
-      card.innerHTML = `
-        <div class="dl-badge">${badgeText}</div>
-        <h4>${title}</h4>
-        <p>${subj}</p>
-        <div class="dl-footer">
-          <span>📅 ${dateStr}</span>
-          <span class="dl-status-badge">Aktif</span>
-          <button class="card-delete-btn" onclick="this.closest('.deadline-card').remove(); alert('Tugas berhasil dihapus!');">🗑️ Hapus</button>
-        </div>
-      `;
-
-      deadlineGrid.prepend(card);
-      alert(`✅ Tugas/Deadline "${title}" berhasil ditambahkan ke Kalender!`);
+      renderDeadlineCardDOM(item, true);
+      alert(`✅ Tugas/Deadline "${item.title}" berhasil disimpan!`);
       adminDeadlineForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
 
-      // Switch to Kalender Tugas tab
       const tugasTab = document.querySelector('.portal-tab[data-tab="tugas"]');
       if (tugasTab) tugasTab.click();
     });
@@ -1132,34 +1297,20 @@ window.addEventListener('load', () => {
 
   // Admin Announcement Submit Handler
   const adminAnnouncementForm = document.getElementById('adminAnnouncementForm');
-  const announcementBoard = document.querySelector('.announcement-board');
-  if (adminAnnouncementForm && announcementBoard) {
+  if (adminAnnouncementForm) {
     adminAnnouncementForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const title = document.getElementById('admAnnTitle').value;
-      const content = document.getElementById('admAnnContent').value;
-      const tag = document.getElementById('admAnnTag').value;
-      const author = document.getElementById('admAnnAuthor').value;
+      const item = {
+        id: 'ann_' + Date.now(),
+        title: document.getElementById('admAnnTitle').value,
+        content: document.getElementById('admAnnContent').value,
+        tag: document.getElementById('admAnnTag').value,
+        author: document.getElementById('admAnnAuthor').value,
+        dateStr: 'Baru saja'
+      };
 
-      let tagLabel = '⚠️ URGENT';
-      if (tag === 'tag-info') tagLabel = 'ℹ️ AKADEMIK';
-      if (tag === 'tag-event') tagLabel = '🎉 KAS & EVENT';
-
-      const card = document.createElement('div');
-      card.className = 'announcement-card pinned';
-      card.innerHTML = `
-        <div class="ann-tag ${tag}">${tagLabel}</div>
-        <h4>${title}</h4>
-        <p>${content}</p>
-        <div class="ann-meta">
-          <span>👤 ${author}</span>
-          <span>🕒 Baru saja</span>
-          <button class="card-delete-btn" onclick="this.closest('.announcement-card').remove(); alert('Pengumuman dihapus!');">🗑️ Hapus</button>
-        </div>
-      `;
-
-      announcementBoard.appendChild(card);
-      alert(`📢 Pengumuman "${title}" berhasil di-post!`);
+      renderAnnouncementCardDOM(item, true);
+      alert(`📢 Pengumuman "${item.title}" berhasil di-post!`);
       adminAnnouncementForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
     });
