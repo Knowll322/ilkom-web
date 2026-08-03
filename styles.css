@@ -2144,8 +2144,8 @@ body.admin-active .navbar {
 }
 
 /* 13. SCROLL REVEAL */
-.scroll-reveal { filter: blur(10px); will-change: opacity, transform, filter; }
-.scroll-reveal.revealed { filter: blur(0); }
+.scroll-reveal { will-change: opacity, transform; }
+.scroll-reveal.revealed { }
 
 /* 14. OVERALL POLISH */
 ::selection { background: var(--gold); color: var(--text-dark); text-shadow: none; }
