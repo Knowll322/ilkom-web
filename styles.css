@@ -1230,6 +1230,111 @@ body {
 .mem-filter:hover { color: var(--blue); background: var(--blue-pale); }
 .mem-filter.active { background: var(--blue); color: var(--white); border-color: transparent; }
 
+/* Class Featured Hero Banner & Moments */
+.class-hero-banner {
+  margin-bottom: 2rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--card-border);
+  position: relative;
+  transition: transform 0.4s var(--ease), box-shadow 0.4s;
+}
+.class-hero-banner:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+.class-banner-img-wrap {
+  position: relative;
+  width: 100%;
+  max-height: 420px;
+  overflow: hidden;
+}
+.class-banner-img {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s var(--ease);
+}
+.class-hero-banner:hover .class-banner-img {
+  transform: scale(1.03);
+}
+.class-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 26, 77, 0.92) 0%, rgba(0, 31, 94, 0.4) 60%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2.5rem;
+  color: var(--white);
+}
+.class-banner-badge {
+  display: inline-block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-dark);
+  background: var(--gold);
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 0.75rem;
+  width: fit-content;
+}
+.class-banner-overlay h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+.class-banner-overlay p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 650px;
+  line-height: 1.5;
+}
+
+.class-moments-section {
+  margin-bottom: 2.5rem;
+}
+.moments-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 1rem;
+}
+.moment-card {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  height: 200px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--card-border);
+}
+.moment-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s var(--ease);
+}
+.moment-card:hover .moment-img {
+  transform: scale(1.08);
+}
+.moment-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  color: var(--white);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
 .member-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
 .member-card {
   background: var(--off-white); border: 1px solid rgba(0,61,165,0.08);
