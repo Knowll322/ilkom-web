@@ -1784,13 +1784,20 @@ window.addEventListener('load', () => {
       e.preventDefault();
       const authPin = document.getElementById('memEditAuthPin').value.trim();
       const nimClean = activeEditNIM.trim();
-      const nimShort = nimClean.split('.').pop(); // e.g. 03415 or 03425
 
-      // Verify NIM password match or master admin PIN 2008
-      const isValid = (authPin === nimClean || authPin === nimShort || authPin === nimShort.replace(/^0+/, '') || authPin === '2008');
+      const inputNorm = authPin.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      const targetNorm = nimClean.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      const targetDigits = targetNorm.replace(/[^0-9]/g, '');
+
+      // Flexible NIM verification: matches full NIM, last 3-5 digits, lowercase/uppercase, or master PIN 2008
+      const isValid = (
+        (inputNorm.length >= 3 && targetNorm.includes(inputNorm)) ||
+        (inputNorm.length >= 3 && targetDigits.includes(inputNorm)) ||
+        authPin === '2008'
+      );
 
       if (!isValid) {
-        alert(`❌ Password/NIM Salah! Masukkan NIM Anda (${nimClean} atau ${nimShort}) untuk mengedit profil ini.`);
+        alert(`❌ Password/NIM Salah! Masukkan NIM Anda (${nimClean}) untuk mengedit profil ini.`);
         return;
       }
 
