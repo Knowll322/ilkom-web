@@ -1004,6 +1004,7 @@ window.addEventListener('load', () => {
   function activateAdminMode() {
     document.body.classList.add('admin-active');
     sessionStorage.setItem('ilkom_admin_mode', 'true');
+    refreshUIFromLocalStorage();
     if (adminModalBackdrop) {
       adminModalBackdrop.style.display = 'flex';
     }
@@ -1012,6 +1013,7 @@ window.addEventListener('load', () => {
   function deactivateAdminMode() {
     document.body.classList.remove('admin-active');
     sessionStorage.removeItem('ilkom_admin_mode');
+    refreshUIFromLocalStorage();
     if (adminModalBackdrop) {
       adminModalBackdrop.style.display = 'none';
     }
@@ -1028,10 +1030,46 @@ window.addEventListener('load', () => {
 
   checkAdminLoginState();
 
+  function switchAdminTab(tabKey) {
+    const adminTabs = document.querySelectorAll('.admin-tab');
+    const adminFormTabs = document.querySelectorAll('.admin-form-tab');
+
+    adminTabs.forEach(t => t.classList.remove('active'));
+    adminFormTabs.forEach(f => f.style.display = 'none');
+
+    const targetTab = document.querySelector(`.admin-tab[data-adm-tab="${tabKey}"]`);
+    if (targetTab) targetTab.classList.add('active');
+
+    if (tabKey === 'sch') {
+      const el = document.getElementById('adminScheduleForm');
+      if (el) el.style.display = 'block';
+    } else if (tabKey === 'dl') {
+      const el = document.getElementById('adminDeadlineForm');
+      if (el) el.style.display = 'block';
+    } else if (tabKey === 'ann') {
+      const el = document.getElementById('adminAnnouncementForm');
+      if (el) el.style.display = 'block';
+    } else if (tabKey === 'karya') {
+      const el = document.getElementById('adminKaryaForm');
+      if (el) el.style.display = 'block';
+    } else if (tabKey === 'news') {
+      const el = document.getElementById('adminNewsForm');
+      if (el) el.style.display = 'block';
+    } else if (tabKey === 'req') {
+      const el = document.getElementById('adminRequestsTab');
+      if (el) el.style.display = 'block';
+      renderAdminRequestsList();
+    }
+  }
+
   function openAdminModal() {
+    const editReqs = getEditRequests();
+    const pendingCount = Object.values(editReqs).filter(r => r.status === 'pending').length;
+
     // If already in admin mode, just open the modal directly
     if (document.body.classList.contains('admin-active')) {
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'flex';
+      if (pendingCount > 0) switchAdminTab('req');
       return;
     }
 
@@ -1039,7 +1077,12 @@ window.addEventListener('load', () => {
     if (pin === null) return; // User cancelled
     if (pin.trim() === SECRET_PIN) {
       activateAdminMode();
-      alert('👑 SELAMAT DATANG KETUA KELAS!\nMode Admin Aktif. Tombol hapus dan form pengisian jadwal/tugas sekarang dapat Anda akses.');
+      if (pendingCount > 0) {
+        switchAdminTab('req');
+        alert(`👑 SELAMAT DATANG KETUA KELAS!\nMode Admin Aktif. Ada ${pendingCount} permintaan edit profil yang menunggu persetujuan Anda!`);
+      } else {
+        alert('👑 SELAMAT DATANG KETUA KELAS!\nMode Admin Aktif. Tombol hapus dan form pengisian jadwal/tugas sekarang dapat Anda akses.');
+      }
     } else {
       alert('❌ PIN Salah! Akses khusus Ketua Kelas & Pengurus.');
     }
@@ -1049,6 +1092,9 @@ window.addEventListener('load', () => {
   if (secretFooterLock) secretFooterLock.addEventListener('click', openAdminModal);
   if (openAdminPanelBtn) openAdminPanelBtn.addEventListener('click', () => {
     if (adminModalBackdrop) adminModalBackdrop.style.display = 'flex';
+    const editReqs = getEditRequests();
+    const pendingCount = Object.values(editReqs).filter(r => r.status === 'pending').length;
+    if (pendingCount > 0) switchAdminTab('req');
   });
   if (exitAdminBtn) exitAdminBtn.addEventListener('click', deactivateAdminMode);
 
@@ -1059,39 +1105,20 @@ window.addEventListener('load', () => {
     }
   });
 
+  // Admin Modal Tab Switcher
+  const adminTabs = document.querySelectorAll('.admin-tab');
+  adminTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetTab = tab.getAttribute('data-adm-tab');
+      switchAdminTab(targetTab);
+    });
+  });
+
   if (adminModalClose) {
     adminModalClose.addEventListener('click', () => {
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
     });
   }
-
-  // Admin Modal Tab Switcher
-  const adminTabs = document.querySelectorAll('.admin-tab');
-  const adminFormTabs = document.querySelectorAll('.admin-form-tab');
-
-  adminTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      adminTabs.forEach(t => t.classList.remove('active'));
-      adminFormTabs.forEach(f => f.style.display = 'none');
-
-      tab.classList.add('active');
-      const targetTab = tab.getAttribute('data-adm-tab');
-      if (targetTab === 'sch') {
-        document.getElementById('adminScheduleForm').style.display = 'block';
-      } else if (targetTab === 'dl') {
-        document.getElementById('adminDeadlineForm').style.display = 'block';
-      } else if (targetTab === 'ann') {
-        document.getElementById('adminAnnouncementForm').style.display = 'block';
-      } else if (targetTab === 'karya') {
-        document.getElementById('adminKaryaForm').style.display = 'block';
-      } else if (targetTab === 'news') {
-        document.getElementById('adminNewsForm').style.display = 'block';
-      } else if (targetTab === 'req') {
-        document.getElementById('adminRequestsTab').style.display = 'block';
-        renderAdminRequestsList();
-      }
-    });
-  });
 
   // ==========================================
   // REALTIME CLOUD DATABASE & LOCAL STORAGE PERSISTENCE
