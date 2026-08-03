@@ -1782,24 +1782,7 @@ window.addEventListener('load', () => {
   if (memberEditForm) {
     memberEditForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const authPin = document.getElementById('memEditAuthPin').value.trim();
       const nimClean = activeEditNIM.trim();
-
-      const inputNorm = authPin.toUpperCase().replace(/[^A-Z0-9]/g, '');
-      const targetNorm = nimClean.toUpperCase().replace(/[^A-Z0-9]/g, '');
-      const targetDigits = targetNorm.replace(/[^0-9]/g, '');
-
-      // Flexible NIM verification: matches full NIM, last 3-5 digits, lowercase/uppercase, or master PIN 2008
-      const isValid = (
-        (inputNorm.length >= 3 && targetNorm.includes(inputNorm)) ||
-        (inputNorm.length >= 3 && targetDigits.includes(inputNorm)) ||
-        authPin === '2008'
-      );
-
-      if (!isValid) {
-        alert(`❌ Password/NIM Salah! Masukkan NIM Anda (${nimClean}) untuk mengedit profil ini.`);
-        return;
-      }
 
       const bio = document.getElementById('memEditBio').value.trim();
       const instagram = document.getElementById('memEditInstagram').value.trim();
