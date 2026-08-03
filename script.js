@@ -1259,10 +1259,14 @@ window.addEventListener('load', () => {
             saveStoredData(STORAGE_KEYS.news, cloudData.news);
           }
           if (cloudData.memberProfiles && typeof cloudData.memberProfiles === 'object') {
-            saveMemberProfiles(cloudData.memberProfiles);
+            const localProfiles = getMemberProfiles();
+            const mergedProfiles = { ...cloudData.memberProfiles, ...localProfiles };
+            saveMemberProfiles(mergedProfiles);
           }
           if (cloudData.editRequests && typeof cloudData.editRequests === 'object') {
-            saveEditRequests(cloudData.editRequests);
+            const localRequests = getEditRequests();
+            const mergedRequests = { ...cloudData.editRequests, ...localRequests };
+            saveEditRequests(mergedRequests);
           }
           refreshUIFromLocalStorage();
         }
@@ -1316,6 +1320,8 @@ window.addEventListener('load', () => {
 
     // Member Profiles & Dynamic Request/Edit Button Attachment
     const memberProfiles = getMemberProfiles();
+    const isAdminActive = document.body.classList.contains('admin-active');
+
     document.querySelectorAll('.member-card').forEach(card => {
       const nimElem = card.querySelector('.mem-nim');
       if (!nimElem) return;
@@ -1332,17 +1338,24 @@ window.addEventListener('load', () => {
 
       const reqStatus = editRequests[nimText] ? editRequests[nimText].status : '';
 
-      if (reqStatus === 'approved') {
+      if (isAdminActive) {
         btn.className = 'btn-member-action btn-edit-approved';
+        btn.style.opacity = '1';
+        btn.innerHTML = '⚡ Edit Profil (Akses Admin)';
+        btn.onclick = () => openMemberEditModal(card, nimText);
+      } else if (reqStatus === 'approved') {
+        btn.className = 'btn-member-action btn-edit-approved';
+        btn.style.opacity = '1';
         btn.innerHTML = '✨ Edit Profil (Izin 1x Aktif)';
         btn.onclick = () => openMemberEditModal(card, nimText);
       } else if (reqStatus === 'pending') {
         btn.className = 'btn-member-action btn-request-member';
-        btn.style.opacity = '0.7';
+        btn.style.opacity = '0.8';
         btn.innerHTML = '⏳ Request Terkirim (Menunggu Admin)';
         btn.onclick = () => alert('⏳ Permintaan edit profil Anda sedang menunggu persetujuan Ketua Kelas / Admin.');
       } else {
         btn.className = 'btn-member-action btn-request-member';
+        btn.style.opacity = '1';
         btn.innerHTML = '📩 Request Edit Profil';
         btn.onclick = () => openStudentRequestModal(card, nimText, studentName);
       }
