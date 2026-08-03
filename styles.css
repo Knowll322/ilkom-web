@@ -691,13 +691,12 @@ body {
 .karya-item:hover { transform: translateY(-8px); box-shadow: var(--card-shadow-hover); }
 .karya-img {
   width: 100%;
-  aspect-ratio: 16 / 10;
-  height: auto;
-  min-height: 220px;
+  height: 250px;
   background-size: cover;
-  background-position: center center;
+  background-position: center top;
   background-repeat: no-repeat;
   background-color: var(--blue-pale);
+  border-radius: var(--radius) var(--radius) 0 0;
   transition: transform 0.5s var(--ease);
 }
 .karya-img.fit-contain {
