@@ -1577,6 +1577,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const newsGrid = document.querySelector('.news-grid');
     if (!newsGrid) return;
 
+    const emptyCard = newsGrid.querySelector('.empty-news-card');
+    if (emptyCard) emptyCard.style.display = 'none';
+
+    const upcomingList = document.getElementById('upcomingList');
+    if (upcomingList) {
+      const hint = upcomingList.querySelector('.empty-upcoming-hint');
+      if (hint) hint.style.display = 'none';
+
+      const upItem = document.createElement('div');
+      upItem.className = 'upcoming-item custom-up-item';
+      upItem.setAttribute('data-id', item.id);
+      upItem.innerHTML = `<span class="upd">${item.dateStr || 'Mendatang'}</span><span>${item.title}</span>`;
+      upcomingList.appendChild(upItem);
+    }
+
     const card = document.createElement('div');
     card.className = 'news-card custom-news';
     card.setAttribute('data-id', item.id);
@@ -1617,10 +1632,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function deleteNewsItem(id, cardElement) {
     cardElement.remove();
+    const upItem = document.querySelector(`.upcoming-item[data-id="${id}"]`);
+    if (upItem) upItem.remove();
+
     let saved = getStoredData(STORAGE_KEYS.news);
     saved = saved.filter(i => i.id !== id);
     saveStoredData(STORAGE_KEYS.news, saved);
     syncAllDataToCloud();
+
+    const newsGrid = document.querySelector('.news-grid');
+    if (newsGrid && newsGrid.querySelectorAll('.news-card').length === 0) {
+      const emptyCard = newsGrid.querySelector('.empty-news-card');
+      if (emptyCard) emptyCard.style.display = 'block';
+    }
+
+    const upcomingList = document.getElementById('upcomingList');
+    if (upcomingList && upcomingList.querySelectorAll('.upcoming-item').length === 0) {
+      const hint = upcomingList.querySelector('.empty-upcoming-hint');
+      if (hint) hint.style.display = 'block';
+    }
+
     alert('Berita berhasil dihapus!');
   }
 
