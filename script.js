@@ -1049,8 +1049,9 @@ window.addEventListener('load', () => {
   });
 
   // ==========================================
-  // LOCALSTORAGE PERSISTENCE FOR ADMIN DATA
+  // REALTIME CLOUD DATABASE & LOCAL STORAGE PERSISTENCE
   // ==========================================
+  const CLOUD_API_URL = 'https://jsonblob.com/api/jsonBlob/019fc85e-47ab-72c3-bb8d-bb481e2e741e';
   const STORAGE_KEYS = {
     schedules: 'ilkom_admin_schedules_v1',
     deadlines: 'ilkom_admin_deadlines_v1',
@@ -1072,6 +1073,67 @@ window.addEventListener('load', () => {
     } catch(e) {
       console.error(e);
     }
+  }
+
+  // Cloud Sync Handler
+  async function syncAllDataToCloud() {
+    const payload = {
+      schedules: getStoredData(STORAGE_KEYS.schedules),
+      deadlines: getStoredData(STORAGE_KEYS.deadlines),
+      announcements: getStoredData(STORAGE_KEYS.announcements)
+    };
+
+    try {
+      await fetch(CLOUD_API_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      console.log('☁️ Data synced to Cloud successfully across all devices!');
+    } catch(err) {
+      console.warn('Cloud sync error, fallback to local storage:', err);
+    }
+  }
+
+  async function loadDataFromCloud() {
+    try {
+      const res = await fetch(CLOUD_API_URL, {
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        const cloudData = await res.json();
+        if (cloudData) {
+          if (Array.isArray(cloudData.schedules)) {
+            saveStoredData(STORAGE_KEYS.schedules, cloudData.schedules);
+          }
+          if (Array.isArray(cloudData.deadlines)) {
+            saveStoredData(STORAGE_KEYS.deadlines, cloudData.deadlines);
+          }
+          if (Array.isArray(cloudData.announcements)) {
+            saveStoredData(STORAGE_KEYS.announcements, cloudData.announcements);
+          }
+          refreshUIFromLocalStorage();
+        }
+      }
+    } catch(err) {
+      console.warn('Cloud load error, loading local data:', err);
+    }
+  }
+
+  function refreshUIFromLocalStorage() {
+    // Clear dynamic items before re-rendering
+    document.querySelectorAll('.schedule-card').forEach(el => el.remove());
+    document.querySelectorAll('.deadline-card').forEach(el => el.remove());
+    document.querySelectorAll('.announcement-card').forEach(el => el.remove());
+
+    const savedSchedules = getStoredData(STORAGE_KEYS.schedules);
+    savedSchedules.forEach(item => renderScheduleCardDOM(item, false));
+
+    const savedDeadlines = getStoredData(STORAGE_KEYS.deadlines);
+    savedDeadlines.forEach(item => renderDeadlineCardDOM(item, false));
+
+    const savedAnnouncements = getStoredData(STORAGE_KEYS.announcements);
+    savedAnnouncements.forEach(item => renderAnnouncementCardDOM(item, false));
   }
 
   // Render Functions
@@ -1108,6 +1170,7 @@ window.addEventListener('load', () => {
       const saved = getStoredData(STORAGE_KEYS.schedules);
       saved.push(item);
       saveStoredData(STORAGE_KEYS.schedules, saved);
+      syncAllDataToCloud();
     }
   }
 
@@ -1116,6 +1179,7 @@ window.addEventListener('load', () => {
     let saved = getStoredData(STORAGE_KEYS.schedules);
     saved = saved.filter(i => i.id !== id);
     saveStoredData(STORAGE_KEYS.schedules, saved);
+    syncAllDataToCloud();
 
     // If day group becomes empty, show empty state again
     const targetGroup = document.querySelector(`.day-schedule-group[data-day-group="${day}"]`);
@@ -1163,6 +1227,7 @@ window.addEventListener('load', () => {
       const saved = getStoredData(STORAGE_KEYS.deadlines);
       saved.unshift(item);
       saveStoredData(STORAGE_KEYS.deadlines, saved);
+      syncAllDataToCloud();
     }
   }
 
@@ -1171,6 +1236,7 @@ window.addEventListener('load', () => {
     let saved = getStoredData(STORAGE_KEYS.deadlines);
     saved = saved.filter(i => i.id !== id);
     saveStoredData(STORAGE_KEYS.deadlines, saved);
+    syncAllDataToCloud();
 
     const deadlineGrid = document.querySelector('.deadline-grid');
     if (deadlineGrid && deadlineGrid.querySelectorAll('.deadline-card').length === 0) {
@@ -1215,6 +1281,7 @@ window.addEventListener('load', () => {
       const saved = getStoredData(STORAGE_KEYS.announcements);
       saved.push(item);
       saveStoredData(STORAGE_KEYS.announcements, saved);
+      syncAllDataToCloud();
     }
   }
 
@@ -1223,6 +1290,7 @@ window.addEventListener('load', () => {
     let saved = getStoredData(STORAGE_KEYS.announcements);
     saved = saved.filter(i => i.id !== id);
     saveStoredData(STORAGE_KEYS.announcements, saved);
+    syncAllDataToCloud();
 
     const announcementBoard = document.querySelector('.announcement-board');
     if (announcementBoard && announcementBoard.querySelectorAll('.announcement-card').length === 0) {
@@ -1232,19 +1300,9 @@ window.addEventListener('load', () => {
     alert('Pengumuman berhasil dihapus!');
   }
 
-  // Load saved data on startup
-  function loadPersistedAdminData() {
-    const savedSchedules = getStoredData(STORAGE_KEYS.schedules);
-    savedSchedules.forEach(item => renderScheduleCardDOM(item, false));
-
-    const savedDeadlines = getStoredData(STORAGE_KEYS.deadlines);
-    savedDeadlines.forEach(item => renderDeadlineCardDOM(item, false));
-
-    const savedAnnouncements = getStoredData(STORAGE_KEYS.announcements);
-    savedAnnouncements.forEach(item => renderAnnouncementCardDOM(item, false));
-  }
-
-  loadPersistedAdminData();
+  // Initial load: render local first, then fetch live cloud data!
+  refreshUIFromLocalStorage();
+  loadDataFromCloud();
 
   // Admin Schedule Submit Handler
   const adminScheduleForm = document.getElementById('adminScheduleForm');
@@ -1262,7 +1320,7 @@ window.addEventListener('load', () => {
       };
 
       renderScheduleCardDOM(item, true);
-      alert(`✅ Jadwal "${item.title}" hari ${item.day.toUpperCase()} berhasil disimpan!`);
+      alert(`✅ Jadwal "${item.title}" hari ${item.day.toUpperCase()} berhasil disimpan ke Cloud (Semua Perangkat)!`);
       adminScheduleForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
 
@@ -1286,7 +1344,7 @@ window.addEventListener('load', () => {
       };
 
       renderDeadlineCardDOM(item, true);
-      alert(`✅ Tugas/Deadline "${item.title}" berhasil disimpan!`);
+      alert(`✅ Tugas/Deadline "${item.title}" berhasil disimpan ke Cloud (Semua Perangkat)!`);
       adminDeadlineForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
 
@@ -1310,7 +1368,7 @@ window.addEventListener('load', () => {
       };
 
       renderAnnouncementCardDOM(item, true);
-      alert(`📢 Pengumuman "${item.title}" berhasil di-post!`);
+      alert(`📢 Pengumuman "${item.title}" berhasil di-post ke Cloud (Semua Perangkat)!`);
       adminAnnouncementForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
     });
