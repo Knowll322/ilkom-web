@@ -1286,14 +1286,10 @@ window.addEventListener('load', () => {
             saveStoredData(STORAGE_KEYS.news, cloudData.news);
           }
           if (cloudData.memberProfiles && typeof cloudData.memberProfiles === 'object') {
-            const localProfiles = getMemberProfiles();
-            const mergedProfiles = { ...cloudData.memberProfiles, ...localProfiles };
-            saveMemberProfiles(mergedProfiles);
+            saveMemberProfiles(cloudData.memberProfiles);
           }
           if (cloudData.editRequests && typeof cloudData.editRequests === 'object') {
-            const localRequests = getEditRequests();
-            const mergedRequests = { ...cloudData.editRequests, ...localRequests };
-            saveEditRequests(mergedRequests);
+            saveEditRequests(cloudData.editRequests);
           }
           refreshUIFromLocalStorage();
         }
@@ -2084,8 +2080,8 @@ window.addEventListener('load', () => {
     });
   }
 
-  // Realtime Cloud Synchronization across all devices (Every 4 seconds)
+  // Realtime Cloud Synchronization across all devices (Every 3 seconds)
   loadDataFromCloud();
-  setInterval(loadDataFromCloud, 4000);
+  setInterval(loadDataFromCloud, 3000);
 });
 
