@@ -1758,17 +1758,35 @@ window.addEventListener('load', () => {
     const bioElem = card.querySelector('.mem-bio');
     const socElem = card.querySelector('.mem-soc');
 
-    document.getElementById('memEditTargetName').textContent = nameElem ? nameElem.textContent : 'Edit Profil Mahasiswa';
-    document.getElementById('memEditTargetNIM').textContent = `NIM: ${nim}`;
-    document.getElementById('memEditBio').value = bioElem ? bioElem.textContent.replace(/"/g, '') : '';
-    document.getElementById('memEditInstagram').value = socElem ? socElem.href : '';
-    document.getElementById('memEditPhotoUrl').value = '';
-    document.getElementById('memEditAuthPin').value = '';
-    document.getElementById('memEditFileInput').value = '';
+    const targetNameEl = document.getElementById('memEditTargetName');
+    const targetNIMEl = document.getElementById('memEditTargetNIM');
+    const bioInputEl = document.getElementById('memEditBio');
+    const igInputEl = document.getElementById('memEditInstagram');
+    const urlInputEl = document.getElementById('memEditPhotoUrl');
+    const fileInputEl = document.getElementById('memEditFileInput');
+
+    if (targetNameEl) targetNameEl.textContent = nameElem ? nameElem.textContent : 'Edit Profil Mahasiswa';
+    if (targetNIMEl) targetNIMEl.textContent = `NIM: ${nim}`;
+    if (bioInputEl) bioInputEl.value = bioElem ? bioElem.textContent.replace(/"/g, '') : '';
+    if (igInputEl) igInputEl.value = socElem ? socElem.href : '';
+    if (urlInputEl) urlInputEl.value = '';
+    if (fileInputEl) fileInputEl.value = '';
 
     const modal = document.getElementById('memberEditModalBackdrop');
     if (modal) modal.style.display = 'flex';
   }
+
+  // Global delegation for Edit Profile Button
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-edit-member');
+    if (btn) {
+      const card = btn.closest('.member-card');
+      const nim = btn.getAttribute('data-nim');
+      if (card && nim) {
+        openMemberEditModal(card, nim);
+      }
+    }
+  });
 
   const memberEditModalClose = document.getElementById('memberEditModalClose');
   if (memberEditModalClose) {
