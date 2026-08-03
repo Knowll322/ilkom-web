@@ -1630,6 +1630,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Bind static delete buttons for news cards
+  document.querySelectorAll('.news-card .card-delete-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const card = e.target.closest('.news-card');
+      if (card) {
+        card.remove();
+        alert('Berita berhasil dihapus!');
+      }
+    });
+  });
+
   function deleteNewsItem(id, cardElement) {
     cardElement.remove();
     const upItem = document.querySelector(`.upcoming-item[data-id="${id}"]`);

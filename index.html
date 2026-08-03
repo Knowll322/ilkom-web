@@ -1181,10 +1181,32 @@
         </div>
         <!-- News grid -->
         <div class="news-grid">
-          <div class="empty-schedule-card empty-news-card" style="display:block">
-            <span class="empty-icon">📰</span>
-            <h4>Belum Ada Berita / Event Ditambahkan</h4>
-            <p>Ketua Kelas dapat menambahkan Berita & Event Kampus melalui Mode Admin (🔒 PIN: 2008).</p>
+          <div class="news-card scroll-reveal">
+            <div class="news-card-img" style="background:linear-gradient(135deg,#06B6D4,#3B82F6)"></div>
+            <div style="flex:1">
+              <span class="news-tag tag-seminar">🎤 Seminar</span>
+              <h4>Seminar Nasional: Masa Depan Komunikasi Digital</h4>
+              <span class="news-date">📅 15 Jul 2026</span>
+              <button class="card-delete-btn">🗑️ Hapus Berita</button>
+            </div>
+          </div>
+          <div class="news-card scroll-reveal" data-delay="1">
+            <div class="news-card-img" style="background:linear-gradient(135deg,#F59E0B,#EF4444)"></div>
+            <div style="flex:1">
+              <span class="news-tag tag-lomba">🏆 Lomba</span>
+              <h4>Juara 1 Kompetisi Film Pendek Nasional</h4>
+              <span class="news-date">📅 28 Jun 2026</span>
+              <button class="card-delete-btn">🗑️ Hapus Berita</button>
+            </div>
+          </div>
+          <div class="news-card scroll-reveal" data-delay="2">
+            <div class="news-card-img" style="background:linear-gradient(135deg,#10B981,#06B6D4)"></div>
+            <div style="flex:1">
+              <span class="news-tag tag-workshop">🛠️ Workshop</span>
+              <h4>Workshop Content Creation bersama YouTuber</h4>
+              <span class="news-date">📅 10 Jun 2026</span>
+              <button class="card-delete-btn">🗑️ Hapus Berita</button>
+            </div>
           </div>
         </div>
         <!-- Calendar sidebar -->
@@ -1201,7 +1223,9 @@
           <div class="cal-grid" id="calendarGrid"></div>
           <div class="upcoming-list" id="upcomingList">
             <h5>📅 Event Mendatang</h5>
-            <div class="empty-upcoming-hint" style="font-size:0.85rem; color:var(--text-muted); font-style:italic;">Belum ada event mendatang. Tentukan melalui Mode Admin.</div>
+            <div class="upcoming-item"><span class="upd">15 Jul</span><span>Seminar Komdig</span></div>
+            <div class="upcoming-item"><span class="upd">22 Jul</span><span>Workshop Podcast</span></div>
+            <div class="upcoming-item"><span class="upd">29 Jul</span><span>UAS PTI & DDK</span></div>
           </div>
         </div>
       </div>
