@@ -239,6 +239,24 @@ window.addEventListener('load', () => {
     drawCanvas();
   }
 
+  // 9. React Bits <LightRays /> WebGL Effect
+  if (typeof window.initLightRays === 'function') {
+    window.initLightRays('lightRaysCanvas', {
+      raysOrigin: 'top-center',
+      raysColor: '#FFB800', // UDINUS Gold rays
+      raysSpeed: 1.2,
+      lightSpread: 0.8,
+      rayLength: 1.5,
+      pulsating: false,
+      fadeDistance: 1.0,
+      saturation: 1.0,
+      followMouse: !isTouchDevice,
+      mouseInfluence: 0.15,
+      noiseAmount: 0.05,
+      distortion: 0.05
+    });
+  }
+
   // 10. Sticker Parallax (GSAP + mousemove)
   const stickers = document.querySelectorAll('.sticker[data-speed]');
   if (!isTouchDevice && stickers.length) {
