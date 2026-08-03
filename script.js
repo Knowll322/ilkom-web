@@ -999,7 +999,7 @@ window.addEventListener('load', () => {
   const adminModalClose = document.getElementById('adminModalClose');
   const openAdminPanelBtn = document.getElementById('openAdminPanelBtn');
   const exitAdminBtn = document.getElementById('exitAdminBtn');
-  const SECRET_PIN = '1234'; // Default Secret PIN for Ketua Kelas (Zain)
+  const SECRET_PIN = '2008'; // Secret PIN for Ketua Kelas (Zain)
 
   function activateAdminMode() {
     document.body.classList.add('admin-active');
@@ -1035,9 +1035,9 @@ window.addEventListener('load', () => {
       return;
     }
 
-    const pin = prompt('🔒 RAHASIA PENGURUS KELAS\nMasukkan PIN Secret Admin (Ketua Kelas):\n(Default PIN: 1234)');
+    const pin = prompt('🔒 RAHASIA PENGURUS KELAS\nMasukkan PIN Admin (Ketua Kelas):');
     if (pin === null) return; // User cancelled
-    if (pin.trim() === SECRET_PIN || pin.trim() === 'zain' || pin.trim() === 'naurah') {
+    if (pin.trim() === SECRET_PIN) {
       activateAdminMode();
       alert('👑 SELAMAT DATANG KETUA KELAS!\nMode Admin Aktif. Tombol hapus dan form pengisian jadwal/tugas sekarang dapat Anda akses.');
     } else {
