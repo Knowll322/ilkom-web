@@ -1183,30 +1183,21 @@
         <div class="news-grid">
           <div class="news-card scroll-reveal">
             <div class="news-card-img" style="background:linear-gradient(135deg,#06B6D4,#3B82F6)"></div>
-            <div style="flex:1">
-              <span class="news-tag tag-seminar">🎤 Seminar</span>
-              <h4>Seminar Nasional: Masa Depan Komunikasi Digital</h4>
-              <span class="news-date">📅 15 Jul 2026</span>
-              <button class="card-delete-btn">🗑️ Hapus Berita</button>
-            </div>
+            <span class="news-tag tag-seminar">Seminar</span>
+            <h4>Seminar Nasional: Masa Depan Komunikasi Digital</h4>
+            <span class="news-date">15 Jul 2026</span>
           </div>
           <div class="news-card scroll-reveal" data-delay="1">
             <div class="news-card-img" style="background:linear-gradient(135deg,#F59E0B,#EF4444)"></div>
-            <div style="flex:1">
-              <span class="news-tag tag-lomba">🏆 Lomba</span>
-              <h4>Juara 1 Kompetisi Film Pendek Nasional</h4>
-              <span class="news-date">📅 28 Jun 2026</span>
-              <button class="card-delete-btn">🗑️ Hapus Berita</button>
-            </div>
+            <span class="news-tag tag-lomba">Lomba</span>
+            <h4>Juara 1 Kompetisi Film Pendek Nasional</h4>
+            <span class="news-date">28 Jun 2026</span>
           </div>
           <div class="news-card scroll-reveal" data-delay="2">
             <div class="news-card-img" style="background:linear-gradient(135deg,#10B981,#06B6D4)"></div>
-            <div style="flex:1">
-              <span class="news-tag tag-workshop">🛠️ Workshop</span>
-              <h4>Workshop Content Creation bersama YouTuber</h4>
-              <span class="news-date">📅 10 Jun 2026</span>
-              <button class="card-delete-btn">🗑️ Hapus Berita</button>
-            </div>
+            <span class="news-tag tag-workshop">Workshop</span>
+            <h4>Workshop Content Creation bersama YouTuber</h4>
+            <span class="news-date">10 Jun 2026</span>
           </div>
         </div>
         <!-- Calendar sidebar -->
@@ -1221,11 +1212,11 @@
             <span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span>
           </div>
           <div class="cal-grid" id="calendarGrid"></div>
-          <div class="upcoming-list" id="upcomingList">
+          <div class="upcoming-list">
             <h5>📅 Event Mendatang</h5>
             <div class="upcoming-item"><span class="upd">15 Jul</span><span>Seminar Komdig</span></div>
             <div class="upcoming-item"><span class="upd">22 Jul</span><span>Workshop Podcast</span></div>
-            <div class="upcoming-item"><span class="upd">29 Jul</span><span>UAS PTI & DDK</span></div>
+            <div class="upcoming-item"><span class="upd">29 Jul</span><span>UAS PTI and DDK</span></div>
           </div>
         </div>
       </div>
@@ -1404,7 +1395,6 @@
         <button class="admin-tab" data-adm-tab="dl">📝 Input Tugas / Deadline</button>
         <button class="admin-tab" data-adm-tab="ann">📌 Post Pengumuman</button>
         <button class="admin-tab" data-adm-tab="karya">🎨 Input Karya Mahasiswa</button>
-        <button class="admin-tab" data-adm-tab="news">📰 Post Berita & Event</button>
       </div>
 
       <div class="admin-modal-body">
@@ -1556,42 +1546,6 @@
           </div>
           <button type="submit" class="btn-admin-submit">🎨 Simpan Karya Mahasiswa</button>
         </form>
-
-        <!-- Form Berita & Event -->
-        <form id="adminNewsForm" class="admin-form-tab" style="display:none">
-          <div class="admin-form-group">
-            <label>Judul Berita / Event Kampus</label>
-            <input type="text" id="admNewsTitle" placeholder="Contoh: Workshop Sinematografi 2026 bersama Sineas" required>
-          </div>
-          <div class="admin-form-group">
-            <label>Ringkasan Berita / Detail Event</label>
-            <textarea id="admNewsExcerpt" rows="3" placeholder="Tuliskan deskripsi singkat event atau pengumuman berita kampus..." required></textarea>
-          </div>
-          <div class="admin-form-row">
-            <div class="admin-form-group">
-              <label>Kategori Tag</label>
-              <select id="admNewsTag" required>
-                <option value="tag-seminar">🎤 Seminar</option>
-                <option value="tag-lomba">🏆 Lomba</option>
-                <option value="tag-workshop">🛠️ Workshop</option>
-                <option value="tag-pengumuman">📌 Pengumuman</option>
-              </select>
-            </div>
-            <div class="admin-form-group">
-              <label>Tanggal Berita / Event</label>
-              <input type="text" id="admNewsDate" placeholder="Contoh: 15 Jul 2026" required>
-            </div>
-          </div>
-          <div class="admin-form-group">
-            <label>📁 Upload Gambar Sampul Berita (HP / Laptop)</label>
-            <input type="file" id="admNewsFileInput" accept="image/*" class="admin-file-picker">
-          </div>
-          <div class="admin-form-group">
-            <label>🌐 ATAU Link Gambar Google (Drive/URL)</label>
-            <input type="text" id="admNewsImg" placeholder="Atau tempel link gambar (Opsional jika sudah upload file)">
-          </div>
-          <button type="submit" class="btn-admin-submit">📰 Post Berita & Event Kampus</button>
-        </form>
       </div>
     </div>
   </div>
@@ -1603,11 +1557,5 @@
   <!-- Anime.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   <script src="script.js"></script>
-  <script>
-    setTimeout(function() {
-      var l = document.getElementById('loader');
-      if (l) l.style.display = 'none';
-    }, 1200);
-  </script>
 </body>
 </html>

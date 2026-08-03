@@ -1,59 +1,40 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
   // Check touch device
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-  // Register GSAP plugins safely
-  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-    try {
-      gsap.registerPlugin(ScrollTrigger, TextPlugin);
-    } catch(e) {
-      console.warn("GSAP plugin registration error:", e);
-    }
+  // Register GSAP plugins
+  if (typeof gsap !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger, TextPlugin);
+  } else {
+    console.warn("GSAP not loaded. Animations will not work properly.");
+    return;
   }
 
-  // 1. Loader + Hero Intro Failsafe
+  // 1. Loader + Hero Intro
   const loaderProgress = document.querySelector('.loader-progress');
   const loader = document.getElementById('loader');
-  let loaderDismissed = false;
-
-  function dismissLoader() {
-    if (loaderDismissed) return;
-    loaderDismissed = true;
-    if (loader) {
-      loader.classList.add('hidden');
-      if (typeof gsap !== 'undefined') {
-        gsap.to(loader, {
-          opacity: 0,
-          duration: 0.5,
-          onComplete: () => {
-            loader.style.display = 'none';
-            revealHero();
-          }
-        });
-      } else {
-        loader.style.display = 'none';
-        revealHero();
-      }
-    } else {
-      revealHero();
-    }
-  }
-
-  // Failsafe: Force hide loader after max 1.2s under any network condition!
-  setTimeout(dismissLoader, 1200);
 
   if (loaderProgress && loader && typeof anime !== 'undefined') {
     anime({
       targets: '.loader-progress',
       width: '100%',
-      duration: 1000,
+      duration: 1400,
       easing: 'easeInOutQuart',
       complete: () => {
-        dismissLoader();
+        gsap.to(loader, {
+          yPercent: -100,
+          duration: 0.8,
+          ease: 'power3.inOut',
+          onComplete: () => {
+            loader.style.display = 'none';
+            revealHero();
+          }
+        });
       }
     });
   } else {
-    dismissLoader();
+    if (loader) loader.style.display = 'none';
+    revealHero();
   }
 
   function revealHero() {
@@ -1103,8 +1084,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('adminAnnouncementForm').style.display = 'block';
       } else if (targetTab === 'karya') {
         document.getElementById('adminKaryaForm').style.display = 'block';
-      } else if (targetTab === 'news') {
-        document.getElementById('adminNewsForm').style.display = 'block';
       }
     });
   });
@@ -1117,14 +1096,33 @@ document.addEventListener('DOMContentLoaded', () => {
     schedules: 'ilkom_admin_schedules_v1',
     deadlines: 'ilkom_admin_deadlines_v1',
     announcements: 'ilkom_admin_announcements_v1',
-    karyas: 'ilkom_admin_karyas_v1',
-    news: 'ilkom_admin_news_v1'
+    karyas: 'ilkom_admin_karyas_v1'
+  };
+
+  const DEFAULT_INITIAL_DATA = {
+    schedules: [
+      { id: 'sch_1', day: 'senin', time: '08.40 - 11.10', room: 'Ruang H.3.4', title: 'Strategi Komunikasi Digital', lecturer: 'Dr. Lisa Mardiana · 3 SKS', status: 'Hari Ini' },
+      { id: 'sch_2', day: 'selasa', time: '10.20 - 12.50', room: 'Ruang H.2.1', title: 'Produksi Media Video & Sinematografi', lecturer: 'Mutia Rahmi Pratiwi, M.I.Kom. · 3 SKS', status: '' }
+    ],
+    deadlines: [
+      { id: 'dl_1', title: 'Pengumpulan Project Short Movie', subj: 'Produksi Media Video & Sinematografi', category: 'tugas', dateStr: 'Jumat, 15 Agustus 2026', urgency: 'urgent' }
+    ],
+    announcements: [
+      { id: 'ann_1', title: 'Selamat Datang di Portal Resmi Ilmu Komunikasi UDINUS!', content: 'Portal ini merupakan pusat informasi jadwal kuliah, tugas, pengumuman, dan karya mahasiswa S1 Ilmu Komunikasi UDINUS Semarang.', tag: 'tag-info', author: 'Zain Yarfa Mubarok (Ketua Kelas)', dateStr: 'Baru saja' }
+    ],
+    karyas: []
   };
 
   function getStoredData(key) {
     try {
       const data = localStorage.getItem(key);
-      return data ? JSON.parse(data) : [];
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+      // Return default initial data if empty
+      const type = key.replace('ilkom_admin_', '').replace('_v1', '');
+      return DEFAULT_INITIAL_DATA[type] || [];
     } catch(e) {
       return [];
     }
@@ -1144,8 +1142,7 @@ document.addEventListener('DOMContentLoaded', () => {
       schedules: getStoredData(STORAGE_KEYS.schedules),
       deadlines: getStoredData(STORAGE_KEYS.deadlines),
       announcements: getStoredData(STORAGE_KEYS.announcements),
-      karyas: getStoredData(STORAGE_KEYS.karyas),
-      news: getStoredData(STORAGE_KEYS.news)
+      karyas: getStoredData(STORAGE_KEYS.karyas)
     };
 
     try {
@@ -1180,9 +1177,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (Array.isArray(cloudData.karyas)) {
             saveStoredData(STORAGE_KEYS.karyas, cloudData.karyas);
           }
-          if (Array.isArray(cloudData.news)) {
-            saveStoredData(STORAGE_KEYS.news, cloudData.news);
-          }
           refreshUIFromLocalStorage();
         }
       }
@@ -1197,7 +1191,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.deadline-card').forEach(el => el.remove());
     document.querySelectorAll('.announcement-card').forEach(el => el.remove());
     document.querySelectorAll('.karya-item.custom-karya').forEach(el => el.remove());
-    document.querySelectorAll('.news-card.custom-news').forEach(el => el.remove());
 
     const savedSchedules = getStoredData(STORAGE_KEYS.schedules);
     savedSchedules.forEach(item => renderScheduleCardDOM(item, false));
@@ -1210,9 +1203,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const savedKaryas = getStoredData(STORAGE_KEYS.karyas);
     savedKaryas.forEach(item => renderKaryaCardDOM(item, false));
-
-    const savedNews = getStoredData(STORAGE_KEYS.news);
-    savedNews.forEach(item => renderNewsCardDOM(item, false));
   }
 
   // Render Functions
@@ -1573,153 +1563,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const karyaSec = document.getElementById('karya');
         if (karyaSec) karyaSec.scrollIntoView({ behavior: 'smooth' });
-  function renderNewsCardDOM(item, isNew = false) {
-    const newsGrid = document.querySelector('.news-grid');
-    if (!newsGrid) return;
-
-    const emptyCard = newsGrid.querySelector('.empty-news-card');
-    if (emptyCard) emptyCard.style.display = 'none';
-
-    const upcomingList = document.getElementById('upcomingList');
-    if (upcomingList) {
-      const hint = upcomingList.querySelector('.empty-upcoming-hint');
-      if (hint) hint.style.display = 'none';
-
-      const upItem = document.createElement('div');
-      upItem.className = 'upcoming-item custom-up-item';
-      upItem.setAttribute('data-id', item.id);
-      upItem.innerHTML = `<span class="upd">${item.dateStr || 'Mendatang'}</span><span>${item.title}</span>`;
-      upcomingList.appendChild(upItem);
-    }
-
-    const card = document.createElement('div');
-    card.className = 'news-card custom-news';
-    card.setAttribute('data-id', item.id);
-
-    const formattedImg = formatImageURL(item.img);
-    const isGradient = formattedImg && (formattedImg.includes('linear-gradient') || formattedImg.includes('gradient'));
-    const bgStyle = isGradient ? formattedImg : `url('${formattedImg}')`;
-
-    let tagLabel = '🎤 Seminar';
-    if (item.tag === 'tag-lomba') tagLabel = '🏆 Lomba';
-    if (item.tag === 'tag-workshop') tagLabel = '🛠️ Workshop';
-    if (item.tag === 'tag-pengumuman') tagLabel = '📌 Pengumuman';
-
-    card.innerHTML = `
-      <div class="news-card-img" style="background:${isGradient ? bgStyle : 'none'}; ${!isGradient ? `background-image:url('${formattedImg}'); background-size:cover; background-position:center;` : ''}"></div>
-      <div style="flex:1">
-        <span class="news-tag ${item.tag}">${tagLabel}</span>
-        <h4>${item.title}</h4>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin:0.3rem 0;">${item.excerpt || ''}</p>
-        <span class="news-date">📅 ${item.dateStr}</span>
-        <button class="card-delete-btn" data-news-id="${item.id}">🗑️ Hapus Berita</button>
-      </div>
-    `;
-
-    card.querySelector('.card-delete-btn').addEventListener('click', () => {
-      deleteNewsItem(item.id, card);
-    });
-
-    newsGrid.prepend(card);
-
-    if (isNew) {
-      const saved = getStoredData(STORAGE_KEYS.news);
-      saved.unshift(item);
-      saveStoredData(STORAGE_KEYS.news, saved);
-      syncAllDataToCloud();
-    }
-  }
-
-  // Bind static delete buttons for news cards
-  document.querySelectorAll('.news-card .card-delete-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const card = e.target.closest('.news-card');
-      if (card) {
-        card.remove();
-        alert('Berita berhasil dihapus!');
-      }
-    });
-  });
-
-  function deleteNewsItem(id, cardElement) {
-    cardElement.remove();
-    const upItem = document.querySelector(`.upcoming-item[data-id="${id}"]`);
-    if (upItem) upItem.remove();
-
-    let saved = getStoredData(STORAGE_KEYS.news);
-    saved = saved.filter(i => i.id !== id);
-    saveStoredData(STORAGE_KEYS.news, saved);
-    syncAllDataToCloud();
-
-    const newsGrid = document.querySelector('.news-grid');
-    if (newsGrid && newsGrid.querySelectorAll('.news-card').length === 0) {
-      const emptyCard = newsGrid.querySelector('.empty-news-card');
-      if (emptyCard) emptyCard.style.display = 'block';
-    }
-
-    const upcomingList = document.getElementById('upcomingList');
-    if (upcomingList && upcomingList.querySelectorAll('.upcoming-item').length === 0) {
-      const hint = upcomingList.querySelector('.empty-upcoming-hint');
-      if (hint) hint.style.display = 'block';
-    }
-
-    alert('Berita berhasil dihapus!');
-  }
-
-  // Admin News Submit Handler
-  const adminNewsForm = document.getElementById('adminNewsForm');
-  if (adminNewsForm) {
-    adminNewsForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const fileInput = document.getElementById('admNewsFileInput');
-      const urlInput = document.getElementById('admNewsImg');
-
-      const title = document.getElementById('admNewsTitle').value;
-      const excerpt = document.getElementById('admNewsExcerpt').value;
-      const tag = document.getElementById('admNewsTag').value;
-      const dateStr = document.getElementById('admNewsDate').value;
-
-      const userFile = fileInput && fileInput.files && fileInput.files[0];
-
-      if (userFile) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const item = {
-            id: 'news_' + Date.now(),
-            title: title,
-            excerpt: excerpt,
-            tag: tag,
-            dateStr: dateStr,
-            img: evt.target.result // base64 Data URL
-          };
-
-          renderNewsCardDOM(item, true);
-          alert(`📰 Berita/Event "${title}" berhasil di-post dan di-sync ke Cloud (Semua Perangkat)!`);
-          adminNewsForm.reset();
-          if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
-
-          const beritaSec = document.getElementById('berita');
-          if (beritaSec) beritaSec.scrollIntoView({ behavior: 'smooth' });
-        };
-        reader.readAsDataURL(userFile);
-      } else {
-        const imgUrl = urlInput ? urlInput.value.trim() : '';
-        const item = {
-          id: 'news_' + Date.now(),
-          title: title,
-          excerpt: excerpt,
-          tag: tag,
-          dateStr: dateStr,
-          img: imgUrl || 'linear-gradient(135deg,#06B6D4,#3B82F6)'
-        };
-
-        renderNewsCardDOM(item, true);
-        alert(`📰 Berita/Event "${title}" berhasil di-post dan di-sync ke Cloud (Semua Perangkat)!`);
-        adminNewsForm.reset();
-        if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
-
-        const beritaSec = document.getElementById('berita');
-        if (beritaSec) beritaSec.scrollIntoView({ behavior: 'smooth' });
       }
     });
   }
