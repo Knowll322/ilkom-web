@@ -1084,6 +1084,8 @@ window.addEventListener('load', () => {
         document.getElementById('adminAnnouncementForm').style.display = 'block';
       } else if (targetTab === 'karya') {
         document.getElementById('adminKaryaForm').style.display = 'block';
+      } else if (targetTab === 'news') {
+        document.getElementById('adminNewsForm').style.display = 'block';
       }
     });
   });
@@ -1096,7 +1098,8 @@ window.addEventListener('load', () => {
     schedules: 'ilkom_admin_schedules_v1',
     deadlines: 'ilkom_admin_deadlines_v1',
     announcements: 'ilkom_admin_announcements_v1',
-    karyas: 'ilkom_admin_karyas_v1'
+    karyas: 'ilkom_admin_karyas_v1',
+    news: 'ilkom_admin_news_v1'
   };
 
   function getStoredData(key) {
@@ -1122,7 +1125,8 @@ window.addEventListener('load', () => {
       schedules: getStoredData(STORAGE_KEYS.schedules),
       deadlines: getStoredData(STORAGE_KEYS.deadlines),
       announcements: getStoredData(STORAGE_KEYS.announcements),
-      karyas: getStoredData(STORAGE_KEYS.karyas)
+      karyas: getStoredData(STORAGE_KEYS.karyas),
+      news: getStoredData(STORAGE_KEYS.news)
     };
 
     try {
@@ -1157,6 +1161,9 @@ window.addEventListener('load', () => {
           if (Array.isArray(cloudData.karyas)) {
             saveStoredData(STORAGE_KEYS.karyas, cloudData.karyas);
           }
+          if (Array.isArray(cloudData.news)) {
+            saveStoredData(STORAGE_KEYS.news, cloudData.news);
+          }
           refreshUIFromLocalStorage();
         }
       }
@@ -1171,6 +1178,7 @@ window.addEventListener('load', () => {
     document.querySelectorAll('.deadline-card').forEach(el => el.remove());
     document.querySelectorAll('.announcement-card').forEach(el => el.remove());
     document.querySelectorAll('.karya-item.custom-karya').forEach(el => el.remove());
+    document.querySelectorAll('.news-card.custom-news').forEach(el => el.remove());
 
     const savedSchedules = getStoredData(STORAGE_KEYS.schedules);
     savedSchedules.forEach(item => renderScheduleCardDOM(item, false));
@@ -1183,6 +1191,9 @@ window.addEventListener('load', () => {
 
     const savedKaryas = getStoredData(STORAGE_KEYS.karyas);
     savedKaryas.forEach(item => renderKaryaCardDOM(item, false));
+
+    const savedNews = getStoredData(STORAGE_KEYS.news);
+    savedNews.forEach(item => renderNewsCardDOM(item, false));
   }
 
   // Render Functions
@@ -1543,6 +1554,111 @@ window.addEventListener('load', () => {
 
         const karyaSec = document.getElementById('karya');
         if (karyaSec) karyaSec.scrollIntoView({ behavior: 'smooth' });
+  function renderNewsCardDOM(item, isNew = false) {
+    const newsGrid = document.querySelector('.news-grid');
+    if (!newsGrid) return;
+
+    const card = document.createElement('div');
+    card.className = 'news-card custom-news';
+    card.setAttribute('data-id', item.id);
+
+    const formattedImg = formatImageURL(item.img);
+    const isGradient = formattedImg && (formattedImg.includes('linear-gradient') || formattedImg.includes('gradient'));
+    const bgStyle = isGradient ? formattedImg : `url('${formattedImg}')`;
+
+    let tagLabel = '🎤 Seminar';
+    if (item.tag === 'tag-lomba') tagLabel = '🏆 Lomba';
+    if (item.tag === 'tag-workshop') tagLabel = '🛠️ Workshop';
+    if (item.tag === 'tag-pengumuman') tagLabel = '📌 Pengumuman';
+
+    card.innerHTML = `
+      <div class="news-card-img" style="background:${isGradient ? bgStyle : 'none'}; ${!isGradient ? `background-image:url('${formattedImg}'); background-size:cover; background-position:center;` : ''}"></div>
+      <div style="flex:1">
+        <span class="news-tag ${item.tag}">${tagLabel}</span>
+        <h4>${item.title}</h4>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin:0.3rem 0;">${item.excerpt || ''}</p>
+        <span class="news-date">📅 ${item.dateStr}</span>
+        <button class="card-delete-btn" data-news-id="${item.id}">🗑️ Hapus Berita</button>
+      </div>
+    `;
+
+    card.querySelector('.card-delete-btn').addEventListener('click', () => {
+      deleteNewsItem(item.id, card);
+    });
+
+    newsGrid.prepend(card);
+
+    if (isNew) {
+      const saved = getStoredData(STORAGE_KEYS.news);
+      saved.unshift(item);
+      saveStoredData(STORAGE_KEYS.news, saved);
+      syncAllDataToCloud();
+    }
+  }
+
+  function deleteNewsItem(id, cardElement) {
+    cardElement.remove();
+    let saved = getStoredData(STORAGE_KEYS.news);
+    saved = saved.filter(i => i.id !== id);
+    saveStoredData(STORAGE_KEYS.news, saved);
+    syncAllDataToCloud();
+    alert('Berita berhasil dihapus!');
+  }
+
+  // Admin News Submit Handler
+  const adminNewsForm = document.getElementById('adminNewsForm');
+  if (adminNewsForm) {
+    adminNewsForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('admNewsFileInput');
+      const urlInput = document.getElementById('admNewsImg');
+
+      const title = document.getElementById('admNewsTitle').value;
+      const excerpt = document.getElementById('admNewsExcerpt').value;
+      const tag = document.getElementById('admNewsTag').value;
+      const dateStr = document.getElementById('admNewsDate').value;
+
+      const userFile = fileInput && fileInput.files && fileInput.files[0];
+
+      if (userFile) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const item = {
+            id: 'news_' + Date.now(),
+            title: title,
+            excerpt: excerpt,
+            tag: tag,
+            dateStr: dateStr,
+            img: evt.target.result // base64 Data URL
+          };
+
+          renderNewsCardDOM(item, true);
+          alert(`📰 Berita/Event "${title}" berhasil di-post dan di-sync ke Cloud (Semua Perangkat)!`);
+          adminNewsForm.reset();
+          if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+
+          const beritaSec = document.getElementById('berita');
+          if (beritaSec) beritaSec.scrollIntoView({ behavior: 'smooth' });
+        };
+        reader.readAsDataURL(userFile);
+      } else {
+        const imgUrl = urlInput ? urlInput.value.trim() : '';
+        const item = {
+          id: 'news_' + Date.now(),
+          title: title,
+          excerpt: excerpt,
+          tag: tag,
+          dateStr: dateStr,
+          img: imgUrl || 'linear-gradient(135deg,#06B6D4,#3B82F6)'
+        };
+
+        renderNewsCardDOM(item, true);
+        alert(`📰 Berita/Event "${title}" berhasil di-post dan di-sync ke Cloud (Semua Perangkat)!`);
+        adminNewsForm.reset();
+        if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+
+        const beritaSec = document.getElementById('berita');
+        if (beritaSec) beritaSec.scrollIntoView({ behavior: 'smooth' });
       }
     });
   }
