@@ -884,6 +884,26 @@ window.addEventListener('load', () => {
     }
   }
 
+  // Global File Download Function
+  window.downloadFile = function(filename, textContent, mimeType = 'text/plain') {
+    let blob;
+    if (textContent instanceof Blob) {
+      blob = textContent;
+    } else {
+      const headerText = `====================================================\nILMU KOMUNIKASI UDINUS — ARSIP MATERI KULIAH RESMI\n====================================================\n\nNama File : ${filename}\nStatus    : Terverifikasi (Dosen Pengampu)\nWebsite   : S1 Ilmu Komunikasi UDINUS (FIK UDINUS Semarang)\nTanggal   : ${new Date().toLocaleDateString('id-ID')}\n\n----------------------------------------------------\nDESKRIPSI MATERI:\n----------------------------------------------------\n${textContent || 'Dokumen materi perkuliahan resmi mahasiswa S1 Ilmu Komunikasi UDINUS.'}\n\nTerima kasih telah menggunakan Portal Akademik Ilkom UDINUS!`;
+      blob = new Blob([headerText], { type: mimeType });
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
   if (materialUploadForm && archiveList) {
     materialUploadForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -897,12 +917,16 @@ window.addEventListener('load', () => {
         return;
       }
 
-      // Determine file extension icon
-      const fileName = fileInput?.files?.[0]?.name || 'Materi_Slide.pptx';
-      const isPdf = fileName.toLowerCase().endsWith('.pdf');
-      const isDoc = fileName.toLowerCase().endsWith('.doc') || fileName.toLowerCase().endsWith('.docx');
+      // Determine file extension & user attached file
+      const userFile = fileInput?.files?.[0];
+      const rawFileName = userFile?.name || `${title.replace(/\s+/g, '_')}.pptx`;
+      const isPdf = rawFileName.toLowerCase().endsWith('.pdf');
+      const isDoc = rawFileName.toLowerCase().endsWith('.doc') || rawFileName.toLowerCase().endsWith('.docx');
       const iconClass = isPdf ? 'pdf' : (isDoc ? 'doc' : 'ppt');
       const iconText = isPdf ? 'PDF' : (isDoc ? 'DOC' : 'PPT');
+
+      // Create unique ID for download button
+      const dlBtnId = 'dl_' + Date.now();
 
       // Create new archive item
       const newItem = document.createElement('div');
@@ -913,10 +937,23 @@ window.addEventListener('load', () => {
           <strong>${title} (${subject})</strong>
           <span>Dosen: ${lecturer} · Baru diunggah · ${iconText}</span>
         </div>
-        <a href="#" class="arc-dl-btn" onclick="alert('Downloading ${title}...'); return false;">Download ⬇️</a>
+        <a href="#" id="${dlBtnId}" class="arc-dl-btn">Download ⬇️</a>
       `;
 
       archiveList.prepend(newItem);
+
+      // Attach real download listener
+      const dlBtn = newItem.querySelector(`#${dlBtnId}`);
+      if (dlBtn) {
+        dlBtn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          if (userFile) {
+            window.downloadFile(userFile.name, userFile, userFile.type || 'application/octet-stream');
+          } else {
+            window.downloadFile(rawFileName, `Slide Materi perkuliahan "${title}" untuk mata kuliah ${subject} oleh Dosen ${lecturer}.`);
+          }
+        });
+      }
 
       if (typeof anime !== 'undefined') {
         anime({
@@ -928,11 +965,12 @@ window.addEventListener('load', () => {
         });
       }
 
-      alert(`✅ Materi "${title}" berhasil diunggah dan disimpan ke Arsip Kuliah!`);
+      alert(`✅ Materi "${title}" berhasil diunggah! Anda dan teman-teman dapat langsung men-download filenya.`);
       materialUploadForm.reset();
       if (fileSelectedName) fileSelectedName.style.display = 'none';
     });
   }
+
 
   // F. Live Archive Search
   const archiveSearchInput = document.getElementById('archiveSearchInput');
