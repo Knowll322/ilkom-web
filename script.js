@@ -1348,6 +1348,26 @@ window.addEventListener('load', () => {
     alert('Pengumuman berhasil dihapus!');
   }
 
+  function formatImageURL(rawUrl) {
+    if (!rawUrl) return '1.jpeg';
+    let url = rawUrl.trim();
+    // Convert Google Drive view links to direct image links
+    if (url.includes('drive.google.com/file/d/')) {
+      const match = url.match(/\/file\/d\/([^\/]+)/);
+      if (match && match[1]) {
+        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+      }
+    }
+    // Convert Google Images search page URLs to direct image URLs if copied from address bar
+    if (url.includes('google.com/imgres?imgurl=')) {
+      const match = url.match(/imgurl=([^&]+)/);
+      if (match && match[1]) {
+        return decodeURIComponent(match[1]);
+      }
+    }
+    return url;
+  }
+
   function renderKaryaCardDOM(item, isNew = false) {
     const karyaTrack = document.getElementById('karyaTrack');
     if (!karyaTrack) return;
@@ -1357,11 +1377,12 @@ window.addEventListener('load', () => {
     card.setAttribute('data-category', item.category);
     card.setAttribute('data-id', item.id);
 
-    const isGradient = item.img && (item.img.includes('linear-gradient') || item.img.includes('gradient'));
-    const bgStyle = isGradient ? item.img : `url('${item.img}')`;
+    const formattedImg = formatImageURL(item.img);
+    const isGradient = formattedImg && (formattedImg.includes('linear-gradient') || formattedImg.includes('gradient'));
+    const isContain = item.fitMode === 'contain';
 
     card.innerHTML = `
-      <div class="karya-img" style="background:${isGradient ? bgStyle : 'none'}; ${!isGradient ? `background-image:url('${item.img}')` : ''}"></div>
+      <div class="karya-img ${isContain ? 'fit-contain' : ''}" style="background:${isGradient ? formattedImg : 'none'}; ${!isGradient ? `background-image:url('${formattedImg}')` : ''}"></div>
       <div class="karya-info">
         <span class="karya-cat">${item.category.toUpperCase()}</span>
         <h4>${item.title}</h4>
@@ -1472,12 +1493,14 @@ window.addEventListener('load', () => {
   if (adminKaryaForm) {
     adminKaryaForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      const fitModeElem = document.getElementById('admKaryaFitMode');
       const item = {
         id: 'karya_' + Date.now(),
         title: document.getElementById('admKaryaTitle').value,
         desc: document.getElementById('admKaryaDesc').value,
         category: document.getElementById('admKaryaCategory').value,
-        img: document.getElementById('admKaryaImg').value
+        img: document.getElementById('admKaryaImg').value,
+        fitMode: fitModeElem ? fitModeElem.value : 'cover'
       };
 
       renderKaryaCardDOM(item, true);

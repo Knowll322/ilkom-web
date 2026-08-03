@@ -1569,9 +1569,16 @@
               </select>
             </div>
             <div class="admin-form-group">
-              <label>URL / File Gambar Karya</label>
-              <input type="text" id="admKaryaImg" placeholder="Contoh: 1.jpeg, 4.jpeg atau URL Gambar" required>
+              <label>Mode Ukuran Gambar</label>
+              <select id="admKaryaFitMode">
+                <option value="cover">🖼️ Pas Kartu (Crop Rapi)</option>
+                <option value="contain">🔍 Tampil Utuh (Tanpa Terpotong)</option>
+              </select>
             </div>
+          </div>
+          <div class="admin-form-group">
+            <label>URL / Link Gambar Google (Drive/Search)</label>
+            <input type="text" id="admKaryaImg" placeholder="Tempel Link Gambar dari Google atau 1.jpeg" required>
           </div>
           <button type="submit" class="btn-admin-submit">🎨 Simpan Karya Mahasiswa</button>
         </form>
