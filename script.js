@@ -1,40 +1,59 @@
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
   // Check touch device
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-  // Register GSAP plugins
-  if (typeof gsap !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger, TextPlugin);
-  } else {
-    console.warn("GSAP not loaded. Animations will not work properly.");
-    return;
+  // Register GSAP plugins safely
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    try {
+      gsap.registerPlugin(ScrollTrigger, TextPlugin);
+    } catch(e) {
+      console.warn("GSAP plugin registration error:", e);
+    }
   }
 
-  // 1. Loader + Hero Intro
+  // 1. Loader + Hero Intro Failsafe
   const loaderProgress = document.querySelector('.loader-progress');
   const loader = document.getElementById('loader');
+  let loaderDismissed = false;
 
-  if (loaderProgress && loader && typeof anime !== 'undefined') {
-    anime({
-      targets: '.loader-progress',
-      width: '100%',
-      duration: 1400,
-      easing: 'easeInOutQuart',
-      complete: () => {
+  function dismissLoader() {
+    if (loaderDismissed) return;
+    loaderDismissed = true;
+    if (loader) {
+      loader.classList.add('hidden');
+      if (typeof gsap !== 'undefined') {
         gsap.to(loader, {
-          yPercent: -100,
-          duration: 0.8,
-          ease: 'power3.inOut',
+          opacity: 0,
+          duration: 0.5,
           onComplete: () => {
             loader.style.display = 'none';
             revealHero();
           }
         });
+      } else {
+        loader.style.display = 'none';
+        revealHero();
+      }
+    } else {
+      revealHero();
+    }
+  }
+
+  // Failsafe: Force hide loader after max 1.2s under any network condition!
+  setTimeout(dismissLoader, 1200);
+
+  if (loaderProgress && loader && typeof anime !== 'undefined') {
+    anime({
+      targets: '.loader-progress',
+      width: '100%',
+      duration: 1000,
+      easing: 'easeInOutQuart',
+      complete: () => {
+        dismissLoader();
       }
     });
   } else {
-    if (loader) loader.style.display = 'none';
-    revealHero();
+    dismissLoader();
   }
 
   function revealHero() {
