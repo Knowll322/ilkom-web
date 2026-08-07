@@ -33,28 +33,102 @@
     </div>
   </div>
 
-  <!-- Navbar -->
-  <nav class="navbar" id="navbar">
-    <div class="nav-inner">
-      <a href="#hero" class="nav-logo">ILKOM<span class="logo-accent">.</span>UDINUS</a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="#about" data-text="About">About</a></li>
-        <li><a href="#peminatan" data-text="Peminatan">Peminatan</a></li>
-        <li><a href="#kurikulum" data-text="Kurikulum">Kurikulum</a></li>
-        <li><a href="#portal-kelas" data-text="Portal Kelas">Portal Kelas</a></li>
-        <li><a href="#karya" data-text="Karya">Karya</a></li>
-        <li><a href="#berita" data-text="Berita">Berita</a></li>
-        <li><a href="#kontak" data-text="Kontak">Kontak</a></li>
-      </ul>
-      <div class="nav-right">
+  <!-- React Bits PillNav -->
+  <div class="pill-nav-container" id="pillNavContainer">
+    <nav class="pill-nav" aria-label="Primary">
+      <a class="pill-logo" href="#hero" aria-label="Home">
+        <div class="logo-text">IK</div>
+      </a>
+
+      <div class="pill-nav-items desktop-only">
+        <ul class="pill-list" role="menubar">
+          <li role="none">
+            <a role="menuitem" href="#about" class="pill is-active">
+              <span class="hover-circle" aria-hidden="true"></span>
+              <span class="label-stack">
+                <span class="pill-label">About</span>
+                <span class="pill-label-hover" aria-hidden="true">About</span>
+              </span>
+            </a>
+          </li>
+          <li role="none">
+            <a role="menuitem" href="#peminatan" class="pill">
+              <span class="hover-circle" aria-hidden="true"></span>
+              <span class="label-stack">
+                <span class="pill-label">Peminatan</span>
+                <span class="pill-label-hover" aria-hidden="true">Peminatan</span>
+              </span>
+            </a>
+          </li>
+          <li role="none">
+            <a role="menuitem" href="#kurikulum" class="pill">
+              <span class="hover-circle" aria-hidden="true"></span>
+              <span class="label-stack">
+                <span class="pill-label">Kurikulum</span>
+                <span class="pill-label-hover" aria-hidden="true">Kurikulum</span>
+              </span>
+            </a>
+          </li>
+          <li role="none">
+            <a role="menuitem" href="#portal-kelas" class="pill">
+              <span class="hover-circle" aria-hidden="true"></span>
+              <span class="label-stack">
+                <span class="pill-label">Portal Kelas</span>
+                <span class="pill-label-hover" aria-hidden="true">Portal Kelas</span>
+              </span>
+            </a>
+          </li>
+          <li role="none">
+            <a role="menuitem" href="#karya" class="pill">
+              <span class="hover-circle" aria-hidden="true"></span>
+              <span class="label-stack">
+                <span class="pill-label">Karya</span>
+                <span class="pill-label-hover" aria-hidden="true">Karya</span>
+              </span>
+            </a>
+          </li>
+          <li role="none">
+            <a role="menuitem" href="#berita" class="pill">
+              <span class="hover-circle" aria-hidden="true"></span>
+              <span class="label-stack">
+                <span class="pill-label">Berita</span>
+                <span class="pill-label-hover" aria-hidden="true">Berita</span>
+              </span>
+            </a>
+          </li>
+          <li role="none">
+            <a role="menuitem" href="#kontak" class="pill">
+              <span class="hover-circle" aria-hidden="true"></span>
+              <span class="label-stack">
+                <span class="pill-label">Kontak</span>
+                <span class="pill-label-hover" aria-hidden="true">Kontak</span>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="pill-nav-right">
         <button class="secret-admin-trigger" id="secretAdminBtn" title="Portal Secret Admin Pengurus">🔒</button>
-        <a href="#kontak" class="nav-cta">Daftar Sekarang →</a>
-        <button class="hamburger" id="hamburger" aria-label="Menu">
-          <span></span><span></span>
+        <button class="mobile-menu-button mobile-only" aria-label="Toggle menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
         </button>
       </div>
+    </nav>
+
+    <div class="mobile-menu-popover mobile-only">
+      <ul class="mobile-menu-list">
+        <li><a href="#about" class="mobile-menu-link">About</a></li>
+        <li><a href="#peminatan" class="mobile-menu-link">Peminatan</a></li>
+        <li><a href="#kurikulum" class="mobile-menu-link">Kurikulum</a></li>
+        <li><a href="#portal-kelas" class="mobile-menu-link">Portal Kelas</a></li>
+        <li><a href="#karya" class="mobile-menu-link">Karya</a></li>
+        <li><a href="#berita" class="mobile-menu-link">Berita</a></li>
+        <li><a href="#kontak" class="mobile-menu-link">Kontak</a></li>
+      </ul>
     </div>
-  </nav>
+  </div>
 
   <!-- Hero Section -->
   <section id="hero" class="hero">
@@ -147,9 +221,14 @@
 
         <!-- Main intro card: col-span 8 -->
         <div class="bento-card bento-main scroll-reveal">
-          <div class="card-badge">Fakultas Ilmu Komputer · UDINUS</div>
-          <h2 class="bento-title">Komunikasi <em>×</em><br>Teknologi <em>×</em><br>Kreativitas</h2>
-          <p>Program Studi S1 Ilmu Komunikasi UDINUS adalah satu-satunya prodi komunikasi yang berada di bawah Fakultas Ilmu Komputer. Kami menggabungkan keilmuan komunikasi dengan teknologi informasi dan jiwa <strong>creativepreneurship</strong>.</p>
+          <div class="bento-main-content">
+            <div class="card-badge">Fakultas Ilmu Komputer · UDINUS</div>
+            <h2 class="bento-title">Komunikasi <em>×</em><br>Teknologi <em>×</em><br>Kreativitas</h2>
+            <p>Program Studi S1 Ilmu Komunikasi UDINUS adalah satu-satunya prodi komunikasi yang berada di bawah Fakultas Ilmu Komputer. Kami menggabungkan keilmuan komunikasi dengan teknologi informasi dan jiwa <strong>creativepreneurship</strong>.</p>
+          </div>
+          <div class="bento-orb-container">
+            <canvas id="orbCanvas" class="orb-container"></canvas>
+          </div>
         </div>
 
         <!-- Akreditasi card: col-span 4 -->
@@ -1376,6 +1455,34 @@
     <a href="#peminatan" class="float-btn">Lihat Peminatan ✦</a>
   </div>
 
+  <!-- PIN Admin Login Modal -->
+  <div class="admin-modal-backdrop" id="adminPinModalBackdrop" style="display:none">
+    <div class="admin-modal-card" style="max-width: 440px;">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title">
+          <span class="admin-icon">👑</span>
+          <div>
+            <h3>Login Admin Pengurus Kelas</h3>
+            <span class="admin-sub">Akses Khusus Ketua Kelas & Admin</span>
+          </div>
+        </div>
+        <button class="admin-modal-close" id="adminPinModalClose">✕</button>
+      </div>
+      <div class="admin-modal-body">
+        <form id="adminPinForm">
+          <div class="admin-form-group">
+            <label>🔐 Masukkan PIN Admin (Ketua Kelas)</label>
+            <input type="password" id="adminPinInput" placeholder="Masukkan PIN (misal: 2008 atau 1234)" required autocomplete="current-password">
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+            💡 <em>PIN bawaan Ketua Kelas: <strong>2008</strong> atau <strong>1234</strong></em>
+          </div>
+          <button type="submit" class="btn-admin-submit">🔑 Masuk Mode Admin</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Hidden Admin Panel Modal -->
   <div class="admin-modal-backdrop" id="adminModalBackdrop" style="display:none">
     <div class="admin-modal-card">
@@ -1387,7 +1494,10 @@
             <span class="admin-sub">Mode Rahasia Ketua Kelas & Pengurus</span>
           </div>
         </div>
-        <button class="admin-modal-close" id="adminModalClose">✕</button>
+        <div style="display:flex; align-items:center; gap:0.5rem">
+          <button id="adminResetBtn" title="Reset Semua Data ke Default" style="background:rgba(239,68,68,0.1); color:#EF4444; border:1px solid rgba(239,68,68,0.3); border-radius:var(--radius-full); padding:0.35rem 0.75rem; font-family:'Space Grotesk',sans-serif; font-size:0.75rem; font-weight:700; cursor:pointer">🔄 Reset Default</button>
+          <button class="admin-modal-close" id="adminModalClose">✕</button>
+        </div>
       </div>
 
       <div class="admin-modal-tabs">
@@ -1653,17 +1763,84 @@
 
         <div class="admin-form-group">
           <label>💬 Bio / Quote Status Semboyan</label>
-          <input type="text" id="memEditBio" placeholder="Contoh: Broadcasting & strategi komunikasi." required>
+          <input type="text" id="memEditBio" placeholder="Contoh: Broadcasting & strategi komunikasi.">
         </div>
 
         <div class="admin-form-group">
           <label>📸 Link Instagram Profil</label>
-          <input type="text" id="memEditInstagram" placeholder="Contoh: https://instagram.com/username" required>
+          <input type="text" id="memEditInstagram" placeholder="Contoh: https://instagram.com/username">
         </div>
 
         <button type="submit" class="btn-admin-submit">💾 Simpan Profil Saya</button>
       </form>
     </div>
+  </div>
+
+  <!-- React Bits BubbleMenu Floating Trigger -->
+  <nav class="bubble-menu fixed" id="bubbleMenu" aria-label="Quick navigation">
+    <div class="bubble logo-bubble" aria-label="Logo">
+      <span class="logo-content">
+        <span style="font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1rem; color: #003DA5; letter-spacing: -0.5px;">ILKOM</span>
+      </span>
+    </div>
+
+    <button
+      type="button"
+      class="bubble toggle-bubble menu-btn"
+      id="bubbleMenuToggle"
+      aria-label="Toggle menu"
+      aria-pressed="false"
+    >
+      <span class="menu-line"></span>
+      <span class="menu-line short"></span>
+    </button>
+  </nav>
+
+  <!-- BubbleMenu Items Overlay -->
+  <div class="bubble-menu-items fixed" id="bubbleMenuItems" aria-hidden="true" style="display: none;">
+    <div class="bubble-menu-backdrop" id="bubbleMenuBackdrop"></div>
+    <ul class="pill-list" role="menu" aria-label="Menu links">
+      <li role="none" class="pill-col">
+        <a role="menuitem" href="#hero" aria-label="Home" class="pill-link" style="--item-rot: -8deg; --pill-bg: #ffffff; --pill-color: #111111; --hover-bg: #3b82f6; --hover-color: #ffffff;">
+          <span class="pill-label">home</span>
+        </a>
+      </li>
+      <li role="none" class="pill-col">
+        <a role="menuitem" href="#about" aria-label="About" class="pill-link" style="--item-rot: 8deg; --pill-bg: #ffffff; --pill-color: #111111; --hover-bg: #10b981; --hover-color: #ffffff;">
+          <span class="pill-label">about</span>
+        </a>
+      </li>
+      <li role="none" class="pill-col">
+        <a role="menuitem" href="#peminatan" aria-label="Peminatan" class="pill-link" style="--item-rot: -6deg; --pill-bg: #ffffff; --pill-color: #111111; --hover-bg: #f59e0b; --hover-color: #ffffff;">
+          <span class="pill-label">peminatan</span>
+        </a>
+      </li>
+      <li role="none" class="pill-col">
+        <a role="menuitem" href="#kurikulum" aria-label="Kurikulum" class="pill-link" style="--item-rot: 8deg; --pill-bg: #ffffff; --pill-color: #111111; --hover-bg: #ec4899; --hover-color: #ffffff;">
+          <span class="pill-label">kurikulum</span>
+        </a>
+      </li>
+      <li role="none" class="pill-col">
+        <a role="menuitem" href="#portal-kelas" aria-label="Portal Kelas" class="pill-link" style="--item-rot: -8deg; --pill-bg: #ffffff; --pill-color: #111111; --hover-bg: #06b6d4; --hover-color: #ffffff;">
+          <span class="pill-label">portal kelas</span>
+        </a>
+      </li>
+      <li role="none" class="pill-col">
+        <a role="menuitem" href="#karya" aria-label="Karya" class="pill-link" style="--item-rot: 6deg; --pill-bg: #ffffff; --pill-color: #111111; --hover-bg: #f43f5e; --hover-color: #ffffff;">
+          <span class="pill-label">karya</span>
+        </a>
+      </li>
+      <li role="none" class="pill-col">
+        <a role="menuitem" href="#berita" aria-label="Berita" class="pill-link" style="--item-rot: -6deg; --pill-bg: #ffffff; --pill-color: #111111; --hover-bg: #8b5cf6; --hover-color: #ffffff;">
+          <span class="pill-label">berita</span>
+        </a>
+      </li>
+      <li role="none" class="pill-col">
+        <a role="menuitem" href="#kontak" aria-label="Kontak" class="pill-link" style="--item-rot: 8deg; --pill-bg: #ffffff; --pill-color: #111111; --hover-bg: #6366f1; --hover-color: #ffffff;">
+          <span class="pill-label">kontak</span>
+        </a>
+      </li>
+    </ul>
   </div>
 
   <!-- GSAP + Plugins -->
@@ -1672,6 +1849,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
   <!-- Anime.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <!-- React Bits Components -->
+  <script src="pill-nav.js"></script>
+  <script src="bubble-menu.js"></script>
+  <script src="orb.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,13 +1,19 @@
-window.addEventListener('load', () => {
-  // Check touch device
+/**
+ * S1 Ilmu Komunikasi UDINUS — Main Application Script
+ * Ultra-Robust Version: All button listeners & DOM handlers initialize unconditionally!
+ */
+
+function initApp() {
+  // Touch device check
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-  // Register GSAP plugins
-  if (typeof gsap !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger, TextPlugin);
-  } else {
-    console.warn("GSAP not loaded. Animations will not work properly.");
-    return;
+  // Register GSAP plugins safely (NO early returns!)
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    try {
+      gsap.registerPlugin(ScrollTrigger);
+    } catch (e) {
+      console.warn("GSAP ScrollTrigger plugin register warning:", e);
+    }
   }
 
   // 1. Loader + Hero Intro
@@ -21,15 +27,20 @@ window.addEventListener('load', () => {
       duration: 1400,
       easing: 'easeInOutQuart',
       complete: () => {
-        gsap.to(loader, {
-          yPercent: -100,
-          duration: 0.8,
-          ease: 'power3.inOut',
-          onComplete: () => {
-            loader.style.display = 'none';
-            revealHero();
-          }
-        });
+        if (typeof gsap !== 'undefined') {
+          gsap.to(loader, {
+            yPercent: -100,
+            duration: 0.8,
+            ease: 'power3.inOut',
+            onComplete: () => {
+              loader.style.display = 'none';
+              revealHero();
+            }
+          });
+        } else {
+          loader.style.display = 'none';
+          revealHero();
+        }
       }
     });
   } else {
@@ -38,41 +49,48 @@ window.addEventListener('load', () => {
   }
 
   function revealHero() {
-    const heroTl = gsap.timeline();
-    
-    gsap.set('.hero-line', { yPercent: 110, opacity: 0 });
-    gsap.set('.hero-tag', { opacity: 0, y: 20 });
-    gsap.set('.hero-bottom', { opacity: 0, y: 30 });
-    gsap.set('.hero-ticker', { opacity: 0 });
-    gsap.set('.scroll-indicator', { opacity: 0 });
-    gsap.set('.sticker', { opacity: 0, scale: 0.6, rotation: -10 });
-    gsap.set('.nav-links li, .nav-cta', { opacity: 0, y: -12 });
-    
-    heroTl
-      .to('.hero-tag', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' })
-      .to('.hero-line', {
-        yPercent: 0,
-        opacity: 1,
-        duration: 0.9,
-        stagger: 0.12,
-        ease: 'expo.out'
-      }, '-=0.2')
-      .to('.hero-bottom', { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.3')
-      .to('.hero-ticker', { opacity: 1, duration: 0.5 }, '-=0.3')
-      .to('.scroll-indicator', { opacity: 1, duration: 0.5 }, '-=0.2')
-      .to('.sticker', {
-        opacity: 1, scale: 1, rotation: 0,
-        duration: 0.6, stagger: 0.1,
-        ease: 'back.out(1.7)'
-      }, '-=0.5')
-      .to('.nav-links li, .nav-cta', {
-        opacity: 1, y: 0,
-        duration: 0.5, stagger: 0.07,
-        ease: 'power2.out'
-      }, 0.3);
+    if (typeof gsap !== 'undefined') {
+      const heroTl = gsap.timeline();
+      
+      gsap.set('.hero-line', { yPercent: 110, opacity: 0 });
+      gsap.set('.hero-tag', { opacity: 0, y: 20 });
+      gsap.set('.hero-bottom', { opacity: 0, y: 30 });
+      gsap.set('.hero-ticker', { opacity: 0 });
+      gsap.set('.scroll-indicator', { opacity: 0 });
+      gsap.set('.sticker', { opacity: 0, scale: 0.6, rotation: -10 });
+      gsap.set('.nav-links li, .nav-cta', { opacity: 0, y: -12 });
+      
+      heroTl
+        .to('.hero-tag', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' })
+        .to('.hero-line', {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.9,
+          stagger: 0.12,
+          ease: 'expo.out'
+        }, '-=0.2')
+        .to('.hero-bottom', { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.3')
+        .to('.hero-ticker', { opacity: 1, duration: 0.5 }, '-=0.3')
+        .to('.scroll-indicator', { opacity: 1, duration: 0.5 }, '-=0.2')
+        .to('.sticker', {
+          opacity: 1, scale: 1, rotation: 0,
+          duration: 0.6, stagger: 0.1,
+          ease: 'back.out(1.7)'
+        }, '-=0.5')
+        .to('.nav-links li, .nav-cta', {
+          opacity: 1, y: 0,
+          duration: 0.5, stagger: 0.07,
+          ease: 'power2.out'
+        }, 0.3);
+    } else {
+      document.querySelectorAll('.hero-line, .hero-tag, .hero-bottom, .hero-ticker, .scroll-indicator, .sticker').forEach(el => {
+        el.style.opacity = 1;
+        el.style.transform = 'none';
+      });
+    }
   }
 
-  // 2. Custom Cursor (Anime.js lerp)
+  // 2. Custom Cursor
   const cursor = document.getElementById('cursor');
   const cursorDot = document.getElementById('cursor-dot');
   if (cursor && cursorDot && !isTouchDevice) {
@@ -82,24 +100,35 @@ window.addEventListener('load', () => {
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      gsap.set(cursorDot, { x: mouseX, y: mouseY });
+      if (typeof gsap !== 'undefined') {
+        gsap.set(cursorDot, { x: mouseX, y: mouseY });
+      } else {
+        cursorDot.style.left = mouseX + 'px';
+        cursorDot.style.top = mouseY + 'px';
+      }
     });
     
-    gsap.ticker.add(() => {
-      curX += (mouseX - curX) * 0.12;
-      curY += (mouseY - curY) * 0.12;
-      gsap.set(cursor, { x: curX, y: curY });
-    });
+    if (typeof gsap !== 'undefined') {
+      gsap.ticker.add(() => {
+        curX += (mouseX - curX) * 0.12;
+        curY += (mouseY - curY) * 0.12;
+        gsap.set(cursor, { x: curX, y: curY });
+      });
+    }
     
     const hoverTargets = document.querySelectorAll('a, button, .karya-item, .bento-card, .peminatan-mega, .activity-tile, .chip');
     hoverTargets.forEach(el => {
       el.addEventListener('mouseenter', () => {
         cursor.classList.add('hover');
-        gsap.to(cursor, { scale: 1.5, duration: 0.3, ease: 'power2.out' });
+        if (typeof gsap !== 'undefined') {
+          gsap.to(cursor, { scale: 1.5, duration: 0.3, ease: 'power2.out' });
+        }
       });
       el.addEventListener('mouseleave', () => {
         cursor.classList.remove('hover');
-        gsap.to(cursor, { scale: 1, duration: 0.3, ease: 'power2.out' });
+        if (typeof gsap !== 'undefined') {
+          gsap.to(cursor, { scale: 1, duration: 0.3, ease: 'power2.out' });
+        }
       });
     });
   }
@@ -109,20 +138,35 @@ window.addEventListener('load', () => {
   progressBar.className = 'scroll-progress';
   document.body.prepend(progressBar);
 
-  ScrollTrigger.create({
-    onUpdate: self => {
-      gsap.set(progressBar, { width: (self.progress * 100) + '%' });
-    }
-  });
+  if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
+    ScrollTrigger.create({
+      onUpdate: self => {
+        gsap.set(progressBar, { width: (self.progress * 100) + '%' });
+      }
+    });
+  } else {
+    window.addEventListener('scroll', () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = total > 0 ? (window.scrollY / total) * 100 : 0;
+      progressBar.style.width = progress + '%';
+    });
+  }
 
-  // 4. Navbar
+  // 4. Navbar Scrolled State
   const navbar = document.querySelector('.navbar');
   if (navbar) {
-    ScrollTrigger.create({
-      start: 'top top-=80',
-      onEnter: () => navbar.classList.add('scrolled'),
-      onLeaveBack: () => navbar.classList.remove('scrolled')
-    });
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.create({
+        start: 'top top-=80',
+        onEnter: () => navbar.classList.add('scrolled'),
+        onLeaveBack: () => navbar.classList.remove('scrolled')
+      });
+    } else {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 80) navbar.classList.add('scrolled');
+        else navbar.classList.remove('scrolled');
+      });
+    }
   }
 
   // 5. Mobile Hamburger Menu
@@ -168,24 +212,32 @@ window.addEventListener('load', () => {
     });
   });
 
-  // 7. ScrollTrigger-based Scroll Reveal
-  gsap.utils.toArray('.scroll-reveal').forEach((el) => {
-    const delay = el.dataset.delay ? parseFloat(el.dataset.delay) * 0.1 : 0;
-    gsap.fromTo(el,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1, y: 0,
-        duration: 0.9,
-        delay: delay,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: el,
-          start: 'top 88%',
-          once: true
+  // 7. Scroll Reveal
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.utils.toArray('.scroll-reveal').forEach((el) => {
+      const delay = el.dataset.delay ? parseFloat(el.dataset.delay) * 0.1 : 0;
+      gsap.fromTo(el,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1, y: 0,
+          duration: 0.9,
+          delay: delay,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            once: true
+          }
         }
-      }
-    );
-  });
+      );
+    });
+  } else {
+    document.querySelectorAll('.scroll-reveal').forEach(el => {
+      el.classList.add('revealed');
+      el.style.opacity = 1;
+      el.style.transform = 'none';
+    });
+  }
 
   // 8. Anime.js Canvas Mesh Gradient (Hero Background)
   const canvas = document.getElementById('heroCanvas');
@@ -239,9 +291,9 @@ window.addEventListener('load', () => {
     drawCanvas();
   }
 
-  // 10. Sticker Parallax (GSAP + mousemove)
+  // 10. Sticker Parallax
   const stickers = document.querySelectorAll('.sticker[data-speed]');
-  if (!isTouchDevice && stickers.length) {
+  if (!isTouchDevice && stickers.length && typeof gsap !== 'undefined') {
     const hero = document.getElementById('hero');
     if (hero) {
       let heroRect = hero.getBoundingClientRect();
@@ -266,65 +318,74 @@ window.addEventListener('load', () => {
     }
   }
 
-  // 11. Number Counters (GSAP ScrollTrigger + anime.js)
+  // 11. Number Counters
   if (typeof anime !== 'undefined') {
     document.querySelectorAll('.stat-big-num[data-target]').forEach(el => {
       const target = parseInt(el.dataset.target);
       const start = target > 100 ? target - 20 : 0;
       const obj = { val: start };
       
-      ScrollTrigger.create({
-        trigger: el,
-        start: 'top 80%',
-        once: true,
-        onEnter: () => {
-          anime({
-            targets: obj,
-            val: target,
-            duration: 2000,
-            easing: 'easeOutExpo',
-            round: 1,
-            update: () => { el.textContent = obj.val; }
-          });
-        }
-      });
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 80%',
+          once: true,
+          onEnter: () => {
+            anime({
+              targets: obj,
+              val: target,
+              duration: 2000,
+              easing: 'easeOutExpo',
+              round: 1,
+              update: () => { el.textContent = obj.val; }
+            });
+          }
+        });
+      } else {
+        el.textContent = target;
+      }
     });
   }
 
-  // 12. Fun Fact Rotator (Anime.js fade cycle)
+  // 12. Fun Fact Rotator
   const facts = [
     'Rata-rata orang menghabiskan 2.5 jam per hari di media sosial. Bayangkan dampak konten yang kamu buat!',
     '93% komunikasi adalah non-verbal — itulah kenapa visual storytelling sangat powerful.',
     'Industri kreatif Indonesia tumbuh 7.4% per tahun. Peluangmu ada di sini!',
     'Public Relations termasuk 10 profesi dengan pertumbuhan tercepat di era digital.',
-    '1 menit video bernilai setara 1.8 juta kata dalam menyampaikan pesan.',
+    '1 menit video bernilai setara 1.8 juta kata dalam menyampaikan pesan.'
   ];
   const funFactEl = document.getElementById('funFactText');
-  if (funFactEl && typeof anime !== 'undefined') {
+  if (funFactEl) {
     let idx = 0;
     setInterval(() => {
-      anime({
-        targets: funFactEl,
-        opacity: [1, 0],
-        translateY: [0, -10],
-        duration: 400,
-        easing: 'easeInQuad',
-        complete: () => {
-          idx = (idx + 1) % facts.length;
-          funFactEl.textContent = facts[idx];
-          anime({
-            targets: funFactEl,
-            opacity: [0, 1],
-            translateY: [10, 0],
-            duration: 500,
-            easing: 'easeOutQuad'
-          });
-        }
-      });
+      if (typeof anime !== 'undefined') {
+        anime({
+          targets: funFactEl,
+          opacity: [1, 0],
+          translateY: [0, -10],
+          duration: 400,
+          easing: 'easeInQuad',
+          complete: () => {
+            idx = (idx + 1) % facts.length;
+            funFactEl.textContent = facts[idx];
+            anime({
+              targets: funFactEl,
+              opacity: [0, 1],
+              translateY: [10, 0],
+              duration: 500,
+              easing: 'easeOutQuad'
+            });
+          }
+        });
+      } else {
+        idx = (idx + 1) % facts.length;
+        funFactEl.textContent = facts[idx];
+      }
     }, 5000);
   }
 
-  // 13. Semester Tabs (GSAP show/hide)
+  // 13. Semester Tabs
   const semTabs = document.querySelectorAll('.sem-tab');
   const accGroups = document.querySelectorAll('.acc-group');
 
@@ -337,10 +398,14 @@ window.addEventListener('load', () => {
       accGroups.forEach(group => {
         if (group.dataset.semester === sem) {
           group.style.display = 'block';
-          gsap.fromTo(group,
-            { opacity: 0, y: 15 },
-            { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }
-          );
+          if (typeof gsap !== 'undefined') {
+            gsap.fromTo(group,
+              { opacity: 0, y: 15 },
+              { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }
+            );
+          } else {
+            group.style.opacity = 1;
+          }
           // Close all acc-body in this group
           group.querySelectorAll('.acc-body').forEach(b => {
             b.classList.remove('open');
@@ -361,10 +426,9 @@ window.addEventListener('load', () => {
       });
     });
   });
-  // Init: show first semester
   if (semTabs[0]) semTabs[0].click();
 
-  // 14. Accordion (GSAP height animation)
+  // 14. Accordion
   document.querySelectorAll('.acc-header').forEach(header => {
     header.addEventListener('click', () => {
       const body = header.nextElementSibling;
@@ -372,13 +436,16 @@ window.addEventListener('load', () => {
       
       const isOpen = body.classList.contains('open');
       
-      // Close siblings in same group
       const group = header.closest('.acc-group');
       if (group) {
         group.querySelectorAll('.acc-body.open').forEach(openBody => {
           openBody.classList.remove('open');
-          gsap.to(openBody, { maxHeight: 0, duration: 0.35, ease: 'power2.inOut' });
-          if(openBody.previousElementSibling) openBody.previousElementSibling.classList.remove('active');
+          if (typeof gsap !== 'undefined') {
+            gsap.to(openBody, { maxHeight: 0, duration: 0.35, ease: 'power2.inOut' });
+          } else {
+            openBody.style.maxHeight = '0px';
+          }
+          if (openBody.previousElementSibling) openBody.previousElementSibling.classList.remove('active');
         });
       }
       
@@ -386,15 +453,19 @@ window.addEventListener('load', () => {
         body.classList.add('open');
         header.classList.add('active');
         const fullHeight = body.scrollHeight;
-        gsap.fromTo(body,
-          { maxHeight: 0 },
-          { maxHeight: fullHeight + 'px', duration: 0.5, ease: 'power2.out' }
-        );
+        if (typeof gsap !== 'undefined') {
+          gsap.fromTo(body,
+            { maxHeight: 0 },
+            { maxHeight: fullHeight + 'px', duration: 0.5, ease: 'power2.out' }
+          );
+        } else {
+          body.style.maxHeight = fullHeight + 'px';
+        }
       }
     });
   });
 
-  // 15. Horizontal Drag Scroll (Karya) + momentum
+  // 15. Horizontal Drag Scroll (Karya)
   const dragContainer = document.querySelector('.karya-scroll-container');
   if (dragContainer) {
     let isDragging = false, startX, scrollLeft, velocity = 0, lastX, rafId;
@@ -425,7 +496,6 @@ window.addEventListener('load', () => {
       if (!isDragging) return;
       isDragging = false;
       dragContainer.classList.remove('dragging');
-      // Momentum
       const applyMomentum = () => {
         if (Math.abs(velocity) < 0.5) return;
         dragContainer.scrollLeft -= velocity * 1.5;
@@ -438,7 +508,6 @@ window.addEventListener('load', () => {
     window.addEventListener('mouseup', stopDrag);
     window.addEventListener('mouseleave', stopDrag);
     
-    // Touch support
     let touchStartX = 0, touchScrollLeft = 0;
     dragContainer.addEventListener('touchstart', e => {
       touchStartX = e.touches[0].pageX;
@@ -450,16 +519,15 @@ window.addEventListener('load', () => {
     }, { passive: true });
   }
 
-  // 16. Karya Filter (Anime.js)
-  if (typeof anime !== 'undefined') {
-    document.querySelectorAll('.filter-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        const filter = pill.dataset.filter;
-        const items = document.querySelectorAll('.karya-item');
-        
-        // Animate out all
+  // 16. Karya Filter
+  document.querySelectorAll('.filter-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const filter = pill.dataset.filter;
+      const items = document.querySelectorAll('.karya-item');
+      
+      if (typeof anime !== 'undefined') {
         anime({
           targets: items,
           opacity: 0,
@@ -470,7 +538,6 @@ window.addEventListener('load', () => {
             items.forEach(item => {
               item.style.display = (filter === 'all' || item.dataset.category === filter) ? 'block' : 'none';
             });
-            // Animate in matching
             const visible = [...items].filter(i => i.style.display !== 'none');
             anime({
               targets: visible,
@@ -482,9 +549,14 @@ window.addEventListener('load', () => {
             });
           }
         });
-      });
+      } else {
+        items.forEach(item => {
+          item.style.display = (filter === 'all' || item.dataset.category === filter) ? 'block' : 'none';
+          item.style.opacity = 1;
+        });
+      }
     });
-  }
+  });
 
   // 17. Calendar
   const calGrid = document.getElementById('calendarGrid');
@@ -492,7 +564,7 @@ window.addEventListener('load', () => {
   const calPrev = document.getElementById('calendarPrev');
   const calNext = document.getElementById('calendarNext');
 
-  if (calGrid && typeof anime !== 'undefined') {
+  if (calGrid) {
     const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     const eventDates = ['2026-07-15','2026-07-22','2026-08-05'];
     let current = new Date();
@@ -529,15 +601,16 @@ window.addEventListener('load', () => {
         calGrid.appendChild(el);
       }
       
-      // Animate in with anime.js
-      anime({
-        targets: calGrid.querySelectorAll('.cal-day'),
-        opacity: [0, 1],
-        scale: [0.7, 1],
-        delay: anime.stagger(15),
-        duration: 300,
-        easing: 'easeOutBack'
-      });
+      if (typeof anime !== 'undefined') {
+        anime({
+          targets: calGrid.querySelectorAll('.cal-day'),
+          opacity: [0, 1],
+          scale: [0.7, 1],
+          delay: anime.stagger(15),
+          duration: 300,
+          easing: 'easeOutBack'
+        });
+      }
     };
     
     calPrev?.addEventListener('click', () => {
@@ -553,7 +626,7 @@ window.addEventListener('load', () => {
 
   // 18. Contact Form
   const form = document.getElementById('contactForm');
-  if (form && typeof anime !== 'undefined') {
+  if (form) {
     form.addEventListener('submit', e => {
       e.preventDefault();
       const inputs = form.querySelectorAll('.form-input');
@@ -562,74 +635,85 @@ window.addEventListener('load', () => {
       inputs.forEach(input => {
         if (!input.value.trim()) {
           valid = false;
-          // Shake with anime.js
-          anime({
-            targets: input,
-            translateX: [0, -8, 8, -6, 6, -3, 3, 0],
-            borderColor: ['#E2E8F0', '#EF4444', '#E2E8F0'],
-            duration: 500,
-            easing: 'linear'
-          });
+          if (typeof anime !== 'undefined') {
+            anime({
+              targets: input,
+              translateX: [0, -8, 8, -6, 6, -3, 3, 0],
+              borderColor: ['#E2E8F0', '#EF4444', '#E2E8F0'],
+              duration: 500,
+              easing: 'linear'
+            });
+          }
         }
       });
       
       if (valid) {
         const btn = document.getElementById('formSubmit');
-        if(btn) {
+        if (btn) {
           btn.textContent = 'Mengirim...';
           btn.disabled = true;
-          gsap.to(btn, { scale: 0.97, duration: 0.1, yoyo: true, repeat: 1 });
         }
         
         setTimeout(() => {
           const success = document.getElementById('formSuccess');
           form.reset();
-          if(btn) {
+          if (btn) {
             btn.textContent = 'Kirim Pesan →';
             btn.disabled = false;
           }
-          if(success) {
+          if (success) {
             success.style.display = 'block';
-            anime({
-              targets: success,
-              opacity: [0, 1],
-              translateY: [-10, 0],
-              duration: 400,
-              easing: 'easeOutQuad'
-            });
-            gsap.delayedCall(4, () => {
-              anime({ targets: success, opacity: 0, duration: 300, complete: () => success.style.display = 'none' });
-            });
+            if (typeof anime !== 'undefined') {
+              anime({
+                targets: success,
+                opacity: [0, 1],
+                translateY: [-10, 0],
+                duration: 400,
+                easing: 'easeOutQuad'
+              });
+            }
+            setTimeout(() => {
+              if (success) success.style.display = 'none';
+            }, 4000);
           }
         }, 1500);
       }
     });
   }
 
-  // 19. Floating CTA (GSAP ScrollTrigger)
+  // 19. Floating CTA
   const floatingCta = document.getElementById('floatingCta');
   if (floatingCta) {
-    ScrollTrigger.create({
-      trigger: '#hero',
-      start: 'bottom top',
-      onEnter: () => {
-        floatingCta.classList.add('visible');
-        gsap.fromTo(floatingCta, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'back.out(1.7)' });
-      },
-      onLeaveBack: () => {
-        gsap.to(floatingCta, { y: 20, opacity: 0, duration: 0.3, onComplete: () => floatingCta.classList.remove('visible') });
-      }
-    });
+    if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
+      ScrollTrigger.create({
+        trigger: '#hero',
+        start: 'bottom top',
+        onEnter: () => {
+          floatingCta.classList.add('visible');
+          gsap.fromTo(floatingCta, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'back.out(1.7)' });
+        },
+        onLeaveBack: () => {
+          gsap.to(floatingCta, { y: 20, opacity: 0, duration: 0.3, onComplete: () => floatingCta.classList.remove('visible') });
+        }
+      });
+    } else {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 400) floatingCta.classList.add('visible');
+        else floatingCta.classList.remove('visible');
+      });
+    }
   }
 
   // 20. Back to Top
-  document.querySelector('.back-top')?.addEventListener('click', e => {
-    e.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.querySelectorAll('.back-top, .back-to-top').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   });
 
-  // 21. Magnetic Buttons (GSAP)
-  if (!isTouchDevice) {
+  // 21. Magnetic Buttons
+  if (!isTouchDevice && typeof gsap !== 'undefined') {
     document.querySelectorAll('.float-btn, .nav-cta, .btn-hero-primary, .form-submit').forEach(btn => {
       btn.addEventListener('mousemove', e => {
         const rect = btn.getBoundingClientRect();
@@ -651,25 +735,31 @@ window.addEventListener('load', () => {
     });
   }
 
-  // 22. Active Nav Link (ScrollTrigger)
-  document.querySelectorAll('section[id]').forEach(section => {
-    ScrollTrigger.create({
-      trigger: section,
-      start: 'top center',
-      end: 'bottom center',
-      onEnter: () => setActiveLink(section.id),
-      onEnterBack: () => setActiveLink(section.id)
-    });
-  });
-
-  function setActiveLink(id) {
-    document.querySelectorAll('.nav-links a').forEach(a => {
-      a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+  // 22. Active Nav Link
+  if (typeof ScrollTrigger !== 'undefined') {
+    document.querySelectorAll('section[id]').forEach(section => {
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top center',
+        end: 'bottom center',
+        onEnter: () => setActiveLink(section.id),
+        onEnterBack: () => setActiveLink(section.id)
+      });
     });
   }
 
-  // 24. 3D Tilt Cards (GSAP)
-  if (!isTouchDevice) {
+  function setActiveLink(id) {
+    document.querySelectorAll('.nav-links a, .pill').forEach(a => {
+      if (a.getAttribute('href') === '#' + id) {
+        a.classList.add('active', 'is-active');
+      } else {
+        a.classList.remove('active', 'is-active');
+      }
+    });
+  }
+
+  // 24. 3D Tilt Cards
+  if (!isTouchDevice && typeof gsap !== 'undefined') {
     document.querySelectorAll('.bento-card, .peminatan-mega').forEach(card => {
       card.addEventListener('mousemove', e => {
         const rect = card.getBoundingClientRect();
@@ -690,7 +780,7 @@ window.addEventListener('load', () => {
     });
   }
 
-  // 25. Konami Code Easter Egg (Anime.js confetti)
+  // 25. Konami Code Easter Egg
   if (typeof anime !== 'undefined') {
     const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
     let ki = 0;
@@ -700,7 +790,6 @@ window.addEventListener('load', () => {
       if (e.key === konamiCode[ki]) { ki++; } else { ki = 0; }
       if (ki === konamiCode.length) {
         ki = 0;
-        // Burst 80 confetti pieces
         for (let i = 0; i < 80; i++) {
           const piece = document.createElement('div');
           piece.style.cssText = `
@@ -743,6 +832,8 @@ window.addEventListener('load', () => {
           content.style.display = 'block';
           if (typeof gsap !== 'undefined') {
             gsap.fromTo(content, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+          } else {
+            content.style.opacity = 1;
           }
         } else {
           content.style.display = 'none';
@@ -773,6 +864,8 @@ window.addEventListener('load', () => {
               duration: 400,
               easing: 'easeOutQuad'
             });
+          } else {
+            group.querySelectorAll('.schedule-card').forEach(c => c.style.opacity = 1);
           }
         } else {
           group.style.display = 'none';
@@ -802,6 +895,8 @@ window.addEventListener('load', () => {
               duration: 350,
               easing: 'easeOutBack'
             });
+          } else {
+            card.style.opacity = 1;
           }
         } else {
           card.style.display = 'none';
@@ -831,6 +926,8 @@ window.addEventListener('load', () => {
               duration: 400,
               easing: 'easeOutQuad'
             });
+          } else {
+            card.style.opacity = 1;
           }
         } else {
           card.style.display = 'none';
@@ -917,7 +1014,6 @@ window.addEventListener('load', () => {
         return;
       }
 
-      // Determine file extension & user attached file
       const userFile = fileInput?.files?.[0];
       const rawFileName = userFile?.name || `${title.replace(/\s+/g, '_')}.pptx`;
       const isPdf = rawFileName.toLowerCase().endsWith('.pdf');
@@ -925,10 +1021,8 @@ window.addEventListener('load', () => {
       const iconClass = isPdf ? 'pdf' : (isDoc ? 'doc' : 'ppt');
       const iconText = isPdf ? 'PDF' : (isDoc ? 'DOC' : 'PPT');
 
-      // Create unique ID for download button
       const dlBtnId = 'dl_' + Date.now();
 
-      // Create new archive item
       const newItem = document.createElement('div');
       newItem.className = 'archive-item';
       newItem.innerHTML = `
@@ -942,7 +1036,6 @@ window.addEventListener('load', () => {
 
       archiveList.prepend(newItem);
 
-      // Attach real download listener
       const dlBtn = newItem.querySelector(`#${dlBtnId}`);
       if (dlBtn) {
         dlBtn.addEventListener('click', (ev) => {
@@ -971,7 +1064,6 @@ window.addEventListener('load', () => {
     });
   }
 
-
   // F. Live Archive Search
   const archiveSearchInput = document.getElementById('archiveSearchInput');
   if (archiveSearchInput && archiveList) {
@@ -997,14 +1089,27 @@ window.addEventListener('load', () => {
   const secretFooterLock = document.getElementById('secretFooterLock');
   const adminModalBackdrop = document.getElementById('adminModalBackdrop');
   const adminModalClose = document.getElementById('adminModalClose');
+  const adminPinModalBackdrop = document.getElementById('adminPinModalBackdrop');
+  const adminPinModalClose = document.getElementById('adminPinModalClose');
+  const adminPinForm = document.getElementById('adminPinForm');
+  const adminPinInput = document.getElementById('adminPinInput');
   const openAdminPanelBtn = document.getElementById('openAdminPanelBtn');
   const exitAdminBtn = document.getElementById('exitAdminBtn');
-  const SECRET_PIN = '2008'; // Secret PIN for Ketua Kelas (Zain)
+  const adminResetBtn = document.getElementById('adminResetBtn');
+  
+  const VALID_PINS = ['2008', '1234', 'admin', '123456'];
+
+  function validatePIN(pin) {
+    if (!pin) return false;
+    const cleanPin = pin.trim().toLowerCase();
+    return VALID_PINS.includes(cleanPin);
+  }
 
   function activateAdminMode() {
     document.body.classList.add('admin-active');
     sessionStorage.setItem('ilkom_admin_mode', 'true');
     refreshUIFromLocalStorage();
+    if (adminPinModalBackdrop) adminPinModalBackdrop.style.display = 'none';
     if (adminModalBackdrop) {
       adminModalBackdrop.style.display = 'flex';
     }
@@ -1064,28 +1169,53 @@ window.addEventListener('load', () => {
 
   function openAdminModal() {
     const editReqs = getEditRequests();
-    const pendingCount = Object.values(editReqs).filter(r => r.status === 'pending').length;
+    const pendingCount = Object.values(editReqs).filter(r => r && r.status === 'pending').length;
 
-    // If already in admin mode, just open the modal directly
     if (document.body.classList.contains('admin-active')) {
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'flex';
       if (pendingCount > 0) switchAdminTab('req');
       return;
     }
 
-    const pin = prompt('🔒 RAHASIA PENGURUS KELAS\nMasukkan PIN Admin (Ketua Kelas):');
-    if (pin === null) return; // User cancelled
-    if (pin.trim() === SECRET_PIN) {
-      activateAdminMode();
-      if (pendingCount > 0) {
-        switchAdminTab('req');
-        alert(`👑 SELAMAT DATANG KETUA KELAS!\nMode Admin Aktif. Ada ${pendingCount} permintaan edit profil yang menunggu persetujuan Anda!`);
-      } else {
-        alert('👑 SELAMAT DATANG KETUA KELAS!\nMode Admin Aktif. Tombol hapus dan form pengisian jadwal/tugas sekarang dapat Anda akses.');
-      }
+    if (adminPinModalBackdrop) {
+      if (adminPinInput) adminPinInput.value = '';
+      adminPinModalBackdrop.style.display = 'flex';
+      setTimeout(() => { if (adminPinInput) adminPinInput.focus(); }, 100);
     } else {
-      alert('❌ PIN Salah! Akses khusus Ketua Kelas & Pengurus.');
+      const pin = prompt('🔒 RAHASIA PENGURUS KELAS\nMasukkan PIN Admin (Ketua Kelas):');
+      if (pin === null) return;
+      if (validatePIN(pin)) {
+        activateAdminMode();
+      } else {
+        alert('❌ PIN Salah! PIN Bawaan: 2008 atau 1234');
+      }
     }
+  }
+
+  if (adminPinForm) {
+    adminPinForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const pin = adminPinInput ? adminPinInput.value : '';
+      if (validatePIN(pin)) {
+        activateAdminMode();
+        const editReqs = getEditRequests();
+        const pendingCount = Object.values(editReqs).filter(r => r && r.status === 'pending').length;
+        if (pendingCount > 0) {
+          switchAdminTab('req');
+          alert(`👑 SELAMAT DATANG KETUA KELAS!\nMode Admin Aktif. Ada ${pendingCount} permintaan edit profil yang menunggu persetujuan Anda!`);
+        } else {
+          alert('👑 SELAMAT DATANG KETUA KELAS!\nMode Admin Aktif. Tombol hapus dan form pengisian sekarang dapat Anda akses.');
+        }
+      } else {
+        alert('❌ PIN Salah! PIN Bawaan: 2008 atau 1234');
+      }
+    });
+  }
+
+  if (adminPinModalClose) {
+    adminPinModalClose.addEventListener('click', () => {
+      if (adminPinModalBackdrop) adminPinModalBackdrop.style.display = 'none';
+    });
   }
 
   if (secretAdminBtn) secretAdminBtn.addEventListener('click', openAdminModal);
@@ -1093,10 +1223,38 @@ window.addEventListener('load', () => {
   if (openAdminPanelBtn) openAdminPanelBtn.addEventListener('click', () => {
     if (adminModalBackdrop) adminModalBackdrop.style.display = 'flex';
     const editReqs = getEditRequests();
-    const pendingCount = Object.values(editReqs).filter(r => r.status === 'pending').length;
+    const pendingCount = Object.values(editReqs).filter(r => r && r.status === 'pending').length;
     if (pendingCount > 0) switchAdminTab('req');
   });
   if (exitAdminBtn) exitAdminBtn.addEventListener('click', deactivateAdminMode);
+
+  if (adminResetBtn) {
+    adminResetBtn.addEventListener('click', async () => {
+      if (confirm('⚠️ PERINGATAN: Apakah Anda yakin ingin mereset semua data ke kondisi awal/default?')) {
+        localStorage.removeItem(STORAGE_KEYS.schedules);
+        localStorage.removeItem(STORAGE_KEYS.deadlines);
+        localStorage.removeItem(STORAGE_KEYS.announcements);
+        localStorage.removeItem(STORAGE_KEYS.karyas);
+        localStorage.removeItem(STORAGE_KEYS.news);
+        localStorage.removeItem(STORAGE_KEYS.memberProfiles);
+        localStorage.removeItem(STORAGE_KEYS.editRequests);
+        refreshUIFromLocalStorage();
+        await syncAllDataToCloud();
+        alert('✅ Semua data berhasil di-reset ke kondisi awal default!');
+      }
+    });
+  }
+
+  // Close modals when clicking backdrop outside card
+  [adminModalBackdrop, adminPinModalBackdrop].forEach(backdrop => {
+    if (backdrop) {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) {
+          backdrop.style.display = 'none';
+        }
+      });
+    }
+  });
 
   // Secret keyboard shortcut: Shift + A
   document.addEventListener('keydown', (e) => {
@@ -1194,11 +1352,18 @@ window.addEventListener('load', () => {
         const parsed = JSON.parse(data);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
-      // Return default initial data if empty
       const type = key.replace('ilkom_admin_', '').replace('_v1', '');
       return DEFAULT_INITIAL_DATA[type] || [];
     } catch(e) {
       return [];
+    }
+  }
+
+  function saveStoredData(key, data) {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch(e) {
+      console.error(e);
     }
   }
 
@@ -1238,7 +1403,6 @@ window.addEventListener('load', () => {
     });
   }
 
-  // Cloud Sync Handler
   async function syncAllDataToCloud() {
     const payload = {
       schedules: getStoredData(STORAGE_KEYS.schedules),
@@ -1297,7 +1461,6 @@ window.addEventListener('load', () => {
           refreshUIFromLocalStorage();
         }
       } else {
-        console.warn('☁️ Cloud response not OK:', res.status);
         refreshUIFromLocalStorage();
       }
     } catch(err) {
@@ -1322,7 +1485,6 @@ window.addEventListener('load', () => {
   }
 
   function refreshUIFromLocalStorage() {
-    // Clear dynamic items before re-rendering
     try { document.querySelectorAll('.schedule-card').forEach(el => el.remove()); } catch(e) {}
     try { document.querySelectorAll('.deadline-card').forEach(el => el.remove()); } catch(e) {}
     try { document.querySelectorAll('.announcement-card').forEach(el => el.remove()); } catch(e) {}
@@ -1354,7 +1516,6 @@ window.addEventListener('load', () => {
       savedNews.forEach(item => renderNewsCardDOM(item, false));
     } catch(e) { console.warn('News render error:', e); }
 
-    // Update Admin Request Badge count
     try {
       const editRequests = getEditRequests();
       let pendingCount = 0;
@@ -1375,7 +1536,6 @@ window.addEventListener('load', () => {
       renderAdminRequestsList();
     } catch(e) { console.warn('Admin requests render error:', e); }
 
-    // Member Profiles & Dynamic Request/Edit Button Attachment
     try {
       const editRequests = getEditRequests();
       const memberProfiles = getMemberProfiles();
@@ -1423,7 +1583,6 @@ window.addEventListener('load', () => {
           btn.onclick = () => sendStudentRequestDirectly(nimText, studentName);
         }
 
-        // Apply stored profile updates if present
         const prof = memberProfiles[nimText];
         if (prof) {
           if (prof.img) {
@@ -1676,14 +1835,12 @@ window.addEventListener('load', () => {
   function formatImageURL(rawUrl) {
     if (!rawUrl) return '1.jpeg';
     let url = rawUrl.trim();
-    // Convert Google Drive view links to direct image links
     if (url.includes('drive.google.com/file/d/')) {
       const match = url.match(/\/file\/d\/([^\/]+)/);
       if (match && match[1]) {
         return `https://drive.google.com/uc?export=view&id=${match[1]}`;
       }
     }
-    // Convert Google Images search page URLs to direct image URLs if copied from address bar
     if (url.includes('google.com/imgres?imgurl=')) {
       const match = url.match(/imgurl=([^&]+)/);
       if (match && match[1]) {
@@ -1788,7 +1945,7 @@ window.addEventListener('load', () => {
     alert('Berita/Event berhasil dihapus!');
   }
 
-  // Initial load: render local first, then fetch live cloud data!
+  // Initial load
   refreshUIFromLocalStorage();
   loadDataFromCloud();
 
@@ -1797,18 +1954,23 @@ window.addEventListener('load', () => {
   if (adminScheduleForm) {
     adminScheduleForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      const title = document.getElementById('admSchTitle')?.value.trim() || '';
+      if (!title) {
+        alert('⚠️ Harap isi nama mata kuliah.');
+        return;
+      }
       const item = {
         id: 'sch_' + Date.now(),
-        day: document.getElementById('admSchDay').value,
-        time: document.getElementById('admSchTime').value,
-        room: document.getElementById('admSchRoom').value,
-        title: document.getElementById('admSchTitle').value,
-        lecturer: document.getElementById('admSchLecturer').value,
-        status: document.getElementById('admSchStatus').value
+        day: document.getElementById('admSchDay')?.value || 'senin',
+        time: document.getElementById('admSchTime')?.value.trim() || '08.40 - 11.10',
+        room: document.getElementById('admSchRoom')?.value.trim() || 'Ruang H.3.4',
+        title: title,
+        lecturer: document.getElementById('admSchLecturer')?.value.trim() || 'Dosen Pengampu',
+        status: document.getElementById('admSchStatus')?.value || ''
       };
 
       renderScheduleCardDOM(item, true);
-      alert(`✅ Jadwal "${item.title}" hari ${item.day.toUpperCase()} berhasil disimpan ke Cloud (Semua Perangkat)!`);
+      alert(`✅ Jadwal "${item.title}" hari ${item.day.toUpperCase()} berhasil disimpan!`);
       adminScheduleForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
 
@@ -1822,17 +1984,22 @@ window.addEventListener('load', () => {
   if (adminDeadlineForm) {
     adminDeadlineForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      const title = document.getElementById('admDlTitle')?.value.trim() || '';
+      if (!title) {
+        alert('⚠️ Harap isi judul tugas/deadline.');
+        return;
+      }
       const item = {
         id: 'dl_' + Date.now(),
-        title: document.getElementById('admDlTitle').value,
-        subj: document.getElementById('admDlSubj').value,
-        category: document.getElementById('admDlCategory').value,
-        dateStr: document.getElementById('admDlDate').value,
-        urgency: document.getElementById('admDlUrgency').value
+        title: title,
+        subj: document.getElementById('admDlSubj')?.value.trim() || 'Mata Kuliah',
+        category: document.getElementById('admDlCategory')?.value || 'tugas',
+        dateStr: document.getElementById('admDlDate')?.value.trim() || 'Segera',
+        urgency: document.getElementById('admDlUrgency')?.value || 'urgent'
       };
 
       renderDeadlineCardDOM(item, true);
-      alert(`✅ Tugas/Deadline "${item.title}" berhasil disimpan ke Cloud (Semua Perangkat)!`);
+      alert(`✅ Tugas/Deadline "${item.title}" berhasil disimpan!`);
       adminDeadlineForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
 
@@ -1846,17 +2013,23 @@ window.addEventListener('load', () => {
   if (adminAnnouncementForm) {
     adminAnnouncementForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      const title = document.getElementById('admAnnTitle')?.value.trim() || '';
+      const content = document.getElementById('admAnnContent')?.value.trim() || '';
+      if (!title || !content) {
+        alert('⚠️ Harap isi judul dan isi pengumuman.');
+        return;
+      }
       const item = {
         id: 'ann_' + Date.now(),
-        title: document.getElementById('admAnnTitle').value,
-        content: document.getElementById('admAnnContent').value,
-        tag: document.getElementById('admAnnTag').value,
-        author: document.getElementById('admAnnAuthor').value,
+        title: title,
+        content: content,
+        tag: document.getElementById('admAnnTag')?.value || 'tag-info',
+        author: document.getElementById('admAnnAuthor')?.value.trim() || 'Ketua Kelas',
         dateStr: 'Baru saja'
       };
 
       renderAnnouncementCardDOM(item, true);
-      alert(`📢 Pengumuman "${item.title}" berhasil di-post ke Cloud (Semua Perangkat)!`);
+      alert(`📢 Pengumuman "${item.title}" berhasil di-post!`);
       adminAnnouncementForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
     });
@@ -1867,56 +2040,46 @@ window.addEventListener('load', () => {
   if (adminKaryaForm) {
     adminKaryaForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      const title = document.getElementById('admKaryaTitle')?.value.trim() || '';
+      if (!title) {
+        alert('⚠️ Harap isi judul karya.');
+        return;
+      }
+      const desc = document.getElementById('admKaryaDesc')?.value.trim() || '';
+      const category = document.getElementById('admKaryaCategory')?.value || 'video';
       const fitModeElem = document.getElementById('admKaryaFitMode');
-      const fileInput = document.getElementById('admKaryaFileInput');
-      const urlInput = document.getElementById('admKaryaImg');
-
-      const title = document.getElementById('admKaryaTitle').value;
-      const desc = document.getElementById('admKaryaDesc').value;
-      const category = document.getElementById('admKaryaCategory').value;
       const fitMode = fitModeElem ? fitModeElem.value : 'cover';
 
+      const fileInput = document.getElementById('admKaryaFileInput');
+      const urlInput = document.getElementById('admKaryaImg');
       const userFile = fileInput && fileInput.files && fileInput.files[0];
 
-      if (userFile) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const item = {
-            id: 'karya_' + Date.now(),
-            title: title,
-            desc: desc,
-            category: category,
-            img: evt.target.result, // base64 Data URL
-            fitMode: fitMode
-          };
-
-          renderKaryaCardDOM(item, true);
-          alert(`🎨 Karya "${title}" berhasil diunggah dari file dan di-sync ke Cloud (Semua Perangkat)!`);
-          adminKaryaForm.reset();
-          if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
-
-          const karyaSec = document.getElementById('karya');
-          if (karyaSec) karyaSec.scrollIntoView({ behavior: 'smooth' });
-        };
-        reader.readAsDataURL(userFile);
-      } else {
-        const imgUrl = urlInput ? urlInput.value.trim() : '';
+      const processSaveKarya = (imgSrc) => {
         const item = {
           id: 'karya_' + Date.now(),
           title: title,
-          desc: desc,
+          desc: desc || 'Karya Mahasiswa Ilmu Komunikasi UDINUS',
           category: category,
-          img: imgUrl || '1.jpeg',
+          img: imgSrc || '1.jpeg',
           fitMode: fitMode
         };
 
         renderKaryaCardDOM(item, true);
-        alert(`🎨 Karya "${title}" berhasil ditambahkan ke Showcase dan di-sync ke Cloud (Semua Perangkat)!`);
+        alert(`🎨 Karya "${title}" berhasil ditambahkan ke Showcase!`);
         adminKaryaForm.reset();
         if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
 
         const karyaSec = document.getElementById('karya');
         if (karyaSec) karyaSec.scrollIntoView({ behavior: 'smooth' });
+      };
+
+      if (userFile) {
+        compressAndConvertImage(userFile, 800, 800, 0.8)
+          .then(compressedImg => processSaveKarya(compressedImg))
+          .catch(() => processSaveKarya('1.jpeg'));
+      } else {
+        const imgUrl = urlInput ? urlInput.value.trim() : '';
+        processSaveKarya(imgUrl ? formatImageURL(imgUrl) : '1.jpeg');
       }
     });
   }
@@ -1926,59 +2089,48 @@ window.addEventListener('load', () => {
   if (adminNewsForm) {
     adminNewsForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      const title = document.getElementById('admNewsTitle')?.value.trim() || '';
+      if (!title) {
+        alert('⚠️ Harap isi judul berita/event.');
+        return;
+      }
+      const tag = document.getElementById('admNewsTag')?.value || 'tag-seminar';
+      const dateStr = document.getElementById('admNewsDate')?.value.trim() || 'Baru saja';
+
       const fileInput = document.getElementById('admNewsFileInput');
       const urlInput = document.getElementById('admNewsImg');
-
-      const title = document.getElementById('admNewsTitle').value;
-      const tag = document.getElementById('admNewsTag').value;
-      const dateStr = document.getElementById('admNewsDate').value;
-
       const userFile = fileInput && fileInput.files && fileInput.files[0];
 
-      if (userFile) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const item = {
-            id: 'news_' + Date.now(),
-            title: title,
-            tag: tag,
-            dateStr: dateStr,
-            img: evt.target.result // base64 Data URL
-          };
-
-          renderNewsCardDOM(item, true);
-          alert(`📰 Berita/Event "${title}" berhasil di-post dan di-sync ke Cloud!`);
-          adminNewsForm.reset();
-          if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
-
-          const beritaSec = document.getElementById('berita');
-          if (beritaSec) beritaSec.scrollIntoView({ behavior: 'smooth' });
-        };
-        reader.readAsDataURL(userFile);
-      } else {
-        const imgUrl = urlInput ? urlInput.value.trim() : '';
+      const processSaveNews = (imgSrc) => {
         const item = {
           id: 'news_' + Date.now(),
           title: title,
           tag: tag,
-          dateStr: dateStr,
-          img: imgUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&auto=format&fit=crop&q=80'
+          dateStr: dateStr || 'Baru saja',
+          img: imgSrc || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&auto=format&fit=crop&q=80'
         };
 
         renderNewsCardDOM(item, true);
-        alert(`📰 Berita/Event "${title}" berhasil di-post dan di-sync ke Cloud!`);
+        alert(`📰 Berita "${title}" berhasil di-post!`);
         adminNewsForm.reset();
         if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
 
         const beritaSec = document.getElementById('berita');
         if (beritaSec) beritaSec.scrollIntoView({ behavior: 'smooth' });
+      };
+
+      if (userFile) {
+        compressAndConvertImage(userFile, 800, 800, 0.8)
+          .then(compressedImg => processSaveNews(compressedImg))
+          .catch(() => processSaveNews(''));
+      } else {
+        const imgUrl = urlInput ? urlInput.value.trim() : '';
+        processSaveNews(imgUrl ? formatImageURL(imgUrl) : '');
       }
     });
   }
 
-  // ==========================================
-  // MEMBER PROFILE EDIT MODAL HANDLER (PER-NIM AUTH)
-  // ==========================================
+  // Member Profile Edit Modal Handler
   let activeEditCard = null;
   let activeEditNIM = '';
 
@@ -2008,7 +2160,6 @@ window.addEventListener('load', () => {
     if (modal) modal.style.display = 'flex';
   }
 
-  // Global delegation for Edit Profile Button
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.btn-edit-member');
     if (btn) {
@@ -2032,12 +2183,28 @@ window.addEventListener('load', () => {
   if (memberEditForm) {
     memberEditForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const nimClean = activeEditNIM.trim();
 
-      const bio = document.getElementById('memEditBio').value.trim();
-      const instagram = document.getElementById('memEditInstagram').value.trim();
-      const urlPhoto = document.getElementById('memEditPhotoUrl').value.trim();
+      let nimClean = activeEditNIM ? activeEditNIM.trim() : '';
+      if (!nimClean) {
+        const targetNIMEl = document.getElementById('memEditTargetNIM');
+        if (targetNIMEl) {
+          nimClean = targetNIMEl.textContent.replace('NIM:', '').trim();
+        }
+      }
+
+      if (!nimClean) {
+        alert('⚠️ NIM Mahasiswa tidak ditemukan. Silakan klik tombol Edit pada kartu anggota kembali.');
+        return;
+      }
+
+      const bioEl = document.getElementById('memEditBio');
+      const igEl = document.getElementById('memEditInstagram');
+      const urlPhotoEl = document.getElementById('memEditPhotoUrl');
       const fileInput = document.getElementById('memEditFileInput');
+
+      const bio = bioEl ? bioEl.value.trim() : '';
+      const instagram = igEl ? igEl.value.trim() : '';
+      const urlPhoto = urlPhotoEl ? urlPhotoEl.value.trim() : '';
       const userFile = fileInput && fileInput.files && fileInput.files[0];
 
       const saveProfileObj = (imgData) => {
@@ -2045,14 +2212,13 @@ window.addEventListener('load', () => {
         const currentProf = profiles[nimClean] || {};
         profiles[nimClean] = {
           img: imgData || currentProf.img || '',
-          bio: bio,
-          instagram: instagram
+          bio: bio || currentProf.bio || 'Broadcasting & strategi komunikasi',
+          instagram: instagram || currentProf.instagram || '#'
         };
         saveMemberProfiles(profiles);
 
-        // Consume 1x edit permission!
         const reqs = getEditRequests();
-        if (reqs[nimClean]) {
+        if (reqs[nimClean] && !document.body.classList.contains('admin-active')) {
           reqs[nimClean].status = 'consumed';
           saveEditRequests(reqs);
         }
@@ -2060,15 +2226,16 @@ window.addEventListener('load', () => {
         syncAllDataToCloud();
         refreshUIFromLocalStorage();
 
-        alert(`✅ Profil ${document.getElementById('memEditTargetName').textContent} berhasil diperbarui (Akses 1x edit telah digunakan)!`);
+        const nameStr = document.getElementById('memEditTargetName') ? document.getElementById('memEditTargetName').textContent : 'Profil Mahasiswa';
+        alert(`✅ ${nameStr} berhasil disimpan & diperbarui!`);
         const modal = document.getElementById('memberEditModalBackdrop');
         if (modal) modal.style.display = 'none';
       };
 
       if (userFile) {
-        compressAndConvertImage(userFile, 450, 450, 0.75).then(compressedData => {
-          saveProfileObj(compressedData);
-        });
+        compressAndConvertImage(userFile, 450, 450, 0.75)
+          .then(compressedData => saveProfileObj(compressedData))
+          .catch(() => saveProfileObj(''));
       } else {
         const finalPhoto = urlPhoto ? formatImageURL(urlPhoto) : '';
         saveProfileObj(finalPhoto);
@@ -2133,8 +2300,50 @@ window.addEventListener('load', () => {
     });
   }
 
+  // Initialize React Bits PillNav component
+  if (typeof window.initPillNav === 'function') {
+    window.initPillNav({
+      ease: 'power3.easeOut',
+      initialLoadAnimation: true
+    });
+  }
+
+  // Initialize React Bits BubbleMenu component
+  if (typeof window.initBubbleMenu === 'function') {
+    window.initBubbleMenu({
+      animationEase: 'back.out(1.5)',
+      animationDuration: 0.5,
+      staggerDelay: 0.12
+    });
+  }
+
+  // Initialize React Bits Orb WebGL component(s)
+  const orbElements = document.querySelectorAll('.orb-container, #orbCanvas');
+  orbElements.forEach(canvas => {
+    if (typeof window.initOrb === 'function') {
+      const hue = parseFloat(canvas.dataset.hue || '0');
+      const hoverIntensity = parseFloat(canvas.dataset.hoverIntensity || '0.5');
+      const rotateOnHover = canvas.dataset.rotateOnHover !== 'false';
+      const backgroundColor = canvas.dataset.bgColor || '#ffffff';
+
+      window.initOrb(canvas, {
+        hue: hue,
+        hoverIntensity: hoverIntensity,
+        rotateOnHover: rotateOnHover,
+        forceHoverState: false,
+        backgroundColor: backgroundColor
+      });
+    }
+  });
+
   // Realtime Cloud Synchronization across all devices (Every 3 seconds)
   loadDataFromCloud();
   setInterval(loadDataFromCloud, 3000);
-});
+}
 
+// Run initApp when DOM is ready (NO early returns, NO waiting for external scripts!)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
