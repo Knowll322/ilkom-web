@@ -1974,8 +1974,15 @@ function initApp() {
       adminScheduleForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
 
+      // Switch portal tab to Jadwal Kuliah & scroll into view!
+      const jadwalTab = document.querySelector('.portal-tab[data-tab="jadwal"]');
+      if (jadwalTab) jadwalTab.click();
+
       const dayBtn = document.querySelector(`.day-btn[data-day="${item.day}"]`);
       if (dayBtn) dayBtn.click();
+
+      const portalSec = document.getElementById('portal-kelas');
+      if (portalSec) portalSec.scrollIntoView({ behavior: 'smooth' });
     });
   }
 
@@ -2005,6 +2012,9 @@ function initApp() {
 
       const tugasTab = document.querySelector('.portal-tab[data-tab="tugas"]');
       if (tugasTab) tugasTab.click();
+
+      const portalSec = document.getElementById('portal-kelas');
+      if (portalSec) portalSec.scrollIntoView({ behavior: 'smooth' });
     });
   }
 
@@ -2032,6 +2042,12 @@ function initApp() {
       alert(`📢 Pengumuman "${item.title}" berhasil di-post!`);
       adminAnnouncementForm.reset();
       if (adminModalBackdrop) adminModalBackdrop.style.display = 'none';
+
+      const pengumumanTab = document.querySelector('.portal-tab[data-tab="pengumuman"]');
+      if (pengumumanTab) pengumumanTab.click();
+
+      const portalSec = document.getElementById('portal-kelas');
+      if (portalSec) portalSec.scrollIntoView({ behavior: 'smooth' });
     });
   }
 
@@ -2129,6 +2145,17 @@ function initApp() {
       }
     });
   }
+
+  // Universal click fallback for all submit buttons
+  document.querySelectorAll('.btn-admin-submit').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const form = btn.closest('form');
+      if (form) {
+        // Explicitly trigger submit event
+        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+      }
+    });
+  });
 
   // Member Profile Edit Modal Handler
   let activeEditCard = null;

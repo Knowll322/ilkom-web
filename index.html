@@ -1514,7 +1514,7 @@
         <form id="adminScheduleForm" class="admin-form-tab active">
           <div class="admin-form-group">
             <label>Hari Kuliah</label>
-            <select id="admSchDay" required>
+            <select id="admSchDay">
               <option value="senin">Senin</option>
               <option value="selasa">Selasa</option>
               <option value="rabu">Rabu</option>
@@ -1525,21 +1525,21 @@
           <div class="admin-form-row">
             <div class="admin-form-group">
               <label>Jam Perkuliahan</label>
-              <input type="text" id="admSchTime" placeholder="Contoh: 08.40 - 11.10" required>
+              <input type="text" id="admSchTime" placeholder="Contoh: 08.40 - 11.10">
             </div>
             <div class="admin-form-group">
               <label>Kode Ruang</label>
-              <input type="text" id="admSchRoom" placeholder="Contoh: Ruang H.3.4" required>
+              <input type="text" id="admSchRoom" placeholder="Contoh: Ruang H.3.4">
             </div>
           </div>
           <div class="admin-form-group">
             <label>Nama Mata Kuliah</label>
-            <input type="text" id="admSchTitle" placeholder="Contoh: Strategi Komunikasi Digital" required>
+            <input type="text" id="admSchTitle" placeholder="Contoh: Strategi Komunikasi Digital">
           </div>
           <div class="admin-form-row">
             <div class="admin-form-group">
               <label>Dosen Pengampu & SKS</label>
-              <input type="text" id="admSchLecturer" placeholder="Contoh: Dr. Lisa Mardiana · 3 SKS" required>
+              <input type="text" id="admSchLecturer" placeholder="Contoh: Dr. Lisa Mardiana · 3 SKS">
             </div>
             <div class="admin-form-group">
               <label>Status / Catatan Ruang</label>
@@ -1559,12 +1559,12 @@
         <form id="adminDeadlineForm" class="admin-form-tab" style="display:none">
           <div class="admin-form-group">
             <label>Judul Tugas / Ujian</label>
-            <input type="text" id="admDlTitle" placeholder="Contoh: Makalah PR & Media Deck" required>
+            <input type="text" id="admDlTitle" placeholder="Contoh: Makalah PR & Media Deck">
           </div>
           <div class="admin-form-row">
             <div class="admin-form-group">
               <label>Mata Kuliah & Dosen</label>
-              <input type="text" id="admDlSubj" placeholder="Contoh: Public Relations · M. Fikri, M.A." required>
+              <input type="text" id="admDlSubj" placeholder="Contoh: Public Relations · M. Fikri, M.A.">
             </div>
             <div class="admin-form-group">
               <label>Kategori Tugas</label>
@@ -1578,7 +1578,7 @@
           <div class="admin-form-row">
             <div class="admin-form-group">
               <label>Tanggal & Jam Deadline</label>
-              <input type="text" id="admDlDate" placeholder="Contoh: 05 Agustus 2026, 23.59 WIB" required>
+              <input type="text" id="admDlDate" placeholder="Contoh: 05 Agustus 2026, 23.59 WIB">
             </div>
             <div class="admin-form-group">
               <label>Tingkat Urgensi / Status</label>
@@ -1597,11 +1597,11 @@
         <form id="adminAnnouncementForm" class="admin-form-tab" style="display:none">
           <div class="admin-form-group">
             <label>Judul Pengumuman</label>
-            <input type="text" id="admAnnTitle" placeholder="Contoh: Pengumpulan Project Film Pendek" required>
+            <input type="text" id="admAnnTitle" placeholder="Contoh: Pengumpulan Project Film Pendek">
           </div>
           <div class="admin-form-group">
             <label>Isi Pengumuman</label>
-            <textarea id="admAnnContent" rows="3" placeholder="Tuliskan pengumuman resmi untuk seluruh anggota kelas..." required></textarea>
+            <textarea id="admAnnContent" rows="3" placeholder="Tuliskan pengumuman resmi untuk seluruh anggota kelas..."></textarea>
           </div>
           <div class="admin-form-row">
             <div class="admin-form-group">
@@ -1614,7 +1614,7 @@
             </div>
             <div class="admin-form-group">
               <label>Pengirim</label>
-              <input type="text" id="admAnnAuthor" value="Zain Yarfa Mubarok (Ketua Kelas)" required>
+              <input type="text" id="admAnnAuthor" value="Zain Yarfa Mubarok (Ketua Kelas)">
             </div>
           </div>
           <button type="submit" class="btn-admin-submit">📢 Post Pengumuman Kelas</button>
@@ -1624,16 +1624,16 @@
         <form id="adminKaryaForm" class="admin-form-tab" style="display:none">
           <div class="admin-form-group">
             <label>Judul Karya / Project</label>
-            <input type="text" id="admKaryaTitle" placeholder="Contoh: Short Film: Koneksi" required>
+            <input type="text" id="admKaryaTitle" placeholder="Contoh: Short Film: Koneksi">
           </div>
           <div class="admin-form-group">
             <label>Deskripsi Singkat Karya</label>
-            <input type="text" id="admKaryaDesc" placeholder="Contoh: Film pendek buatan mahasiswa kelompok 2" required>
+            <input type="text" id="admKaryaDesc" placeholder="Contoh: Film pendek buatan mahasiswa kelompok 2">
           </div>
           <div class="admin-form-row">
             <div class="admin-form-group">
               <label>Kategori Karya</label>
-              <select id="admKaryaCategory" required>
+              <select id="admKaryaCategory">
                 <option value="video">Video</option>
                 <option value="desain">Desain</option>
                 <option value="campaign">Campaign</option>
@@ -1663,12 +1663,12 @@
         <form id="adminNewsForm" class="admin-form-tab" style="display:none">
           <div class="admin-form-group">
             <label>Judul Berita atau Event</label>
-            <input type="text" id="admNewsTitle" placeholder="Contoh: Seminar Komunikasi Digital & AI 2026" required>
+            <input type="text" id="admNewsTitle" placeholder="Contoh: Seminar Komunikasi Digital & AI 2026">
           </div>
           <div class="admin-form-row">
             <div class="admin-form-group">
               <label>Kategori / Tag</label>
-              <select id="admNewsTag" required>
+              <select id="admNewsTag">
                 <option value="tag-seminar">🎤 Seminar</option>
                 <option value="tag-lomba">🏆 Lomba / Kompetisi</option>
                 <option value="tag-workshop">💡 Workshop</option>
@@ -1677,7 +1677,7 @@
             </div>
             <div class="admin-form-group">
               <label>Tanggal Berita / Event</label>
-              <input type="text" id="admNewsDate" placeholder="Contoh: 15 Agustus 2026" required>
+              <input type="text" id="admNewsDate" placeholder="Contoh: 15 Agustus 2026">
             </div>
           </div>
           <div class="admin-form-group">
